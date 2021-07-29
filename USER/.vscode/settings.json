@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "sys.h": "c",
+        "stm32f1xx.h": "c",
+        "malloc.h": "c",
+        "syn6288.h": "c",
+        "cstdio": "c",
+        "dialog.h": "c",
+        "stdio.h": "c",
+        "adc.h": "c",
+        "usart.h": "c",
+        "string.h": "c",
+        "main.h": "c",
+        "ad9850.h": "c"
+    },
+}

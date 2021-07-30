@@ -15,6 +15,12 @@
 //All rights reserved									  
 ////////////////////////////////////////////////////////////////////////////////// 	
 
-WM_HWIN CreateFramewin(void);
+WM_HWIN CreatemainFramewin(void);
+void mainLogPrint(char *log);
+
+extern WM_HWIN hWin_oscilloscopeFramewin;
+extern WM_HWIN hWin_SingalWindow;
+extern WM_HWIN hWin_AFCFramewin;
+extern WM_HWIN hWin_LogFramewin;
 
 #endif

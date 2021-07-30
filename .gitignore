@@ -2,7 +2,9 @@
 # reference to https://www.cnblogs.com/zzb-Dream-90Time/p/9052130.html
 # Change by Lake.hu@outlook.com
 # reference to Keil->help->µVision User's Guide->Appendix->B. File Types
- 
+
+# 注意：忽略大小写
+
 # Project Files
 !*.OPT
 *.UVGUI.*

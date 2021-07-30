@@ -19,37 +19,6 @@
 */
 
 // USER START (Optionally insert additional includes)
-// USER END
-
-#include "DIALOG.h"
-
-/*********************************************************************
-*
-*       Defines
-*
-**********************************************************************
-*/
-#define ID_FRAMEWIN_0        (GUI_ID_USER + 0x00)
-#define ID_GRAPH_0        (GUI_ID_USER + 0x01)
-#define ID_RADIO_0        (GUI_ID_USER + 0x02)
-#define ID_BUTTON_0        (GUI_ID_USER + 0x03)
-#define ID_CHECKBOX_0        (GUI_ID_USER + 0x04)
-#define ID_TEXT_0        (GUI_ID_USER + 0x05)
-#define ID_TEXT_1        (GUI_ID_USER + 0x06)
-#define ID_TEXT_2        (GUI_ID_USER + 0x07)
-#define ID_TEXT_3        (GUI_ID_USER + 0x08)
-#define ID_RADIO_1        (GUI_ID_USER + 0x09)
-#define ID_RADIO_2        (GUI_ID_USER + 0x0A)
-#define ID_IMAGE_0        (GUI_ID_USER + 0x0B)
-#define ID_SPINBOX_0       (GUI_ID_USER + 0x0C)
-#define ID_SPINBOX_1       (GUI_ID_USER + 0x0D)
-#define ID_BUTTON_1       (GUI_ID_USER + 0x0E)
-#define ID_TEXT_4       (GUI_ID_USER + 0x0F)
-#define ID_SPINBOX_2       (GUI_ID_USER + 0x10)
-
-#define ID_IMAGE_0_IMAGE_0       0x00
-
-// USER START (Optionally insert additional defines)
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -61,6 +30,37 @@
 #include "delay.h"
 #include "SYN6288.h"
 #include "AD9850.h"
+// USER END
+
+#include "DIALOG.h"
+
+/*********************************************************************
+*
+*       Defines
+*
+**********************************************************************
+*/
+#define ID_FRAMEWIN_0     (GUI_ID_USER + 0x00)
+#define ID_GRAPH_0     (GUI_ID_USER + 0x01)
+#define ID_RADIO_0     (GUI_ID_USER + 0x02)
+#define ID_BUTTON_0     (GUI_ID_USER + 0x03)
+#define ID_CHECKBOX_0     (GUI_ID_USER + 0x04)
+#define ID_TEXT_0     (GUI_ID_USER + 0x05)
+#define ID_TEXT_1     (GUI_ID_USER + 0x06)
+#define ID_TEXT_2     (GUI_ID_USER + 0x07)
+#define ID_TEXT_3     (GUI_ID_USER + 0x08)
+#define ID_RADIO_1     (GUI_ID_USER + 0x09)
+#define ID_RADIO_2     (GUI_ID_USER + 0x0A)
+#define ID_IMAGE_0     (GUI_ID_USER + 0x0B)
+#define ID_SPINBOX_0     (GUI_ID_USER + 0x0C)
+#define ID_SPINBOX_1     (GUI_ID_USER + 0x0D)
+#define ID_BUTTON_1     (GUI_ID_USER + 0x0E)
+#define ID_TEXT_4     (GUI_ID_USER + 0x0F)
+#define ID_SPINBOX_2     (GUI_ID_USER + 0x10)
+
+#define ID_IMAGE_0_IMAGE_0     0x00
+
+// USER START (Optionally insert additional defines)
 // USER END
 
 /*********************************************************************
@@ -586,12 +586,12 @@ int mV_div=500;
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { FRAMEWIN_CreateIndirect, "Framewin", ID_FRAMEWIN_0, 0, 0, 480, 320, 0, 0x64, 0 },
+  { FRAMEWIN_CreateIndirect, "oscilloscopeFramewin", ID_FRAMEWIN_0, 1, 0, 472, 299, 0, 0x64, 0 },
   { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 110, 0, 250, 250, 0, 0x0, 0 },
   { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 10, 106, 88, 80, 0, 0x1404, 0 },
   { BUTTON_CreateIndirect, "Button_stop_run", ID_BUTTON_0, 370, 189, 90, 20, 0, 0x0, 0 },
   { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_0, 370, 215, 90, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "LogText", ID_TEXT_0, 4, 250, 354, 39, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "LogText", ID_TEXT_0, 3, 250, 354, 39, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text_Vpp", ID_TEXT_1, 10, 210, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text_DR", ID_TEXT_2, 11, 230, 80, 20, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text_F", ID_TEXT_3, 10, 190, 91, 20, 0, 0x64, 0 },
@@ -761,12 +761,13 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   switch (pMsg->MsgId) {
   case WM_INIT_DIALOG:
     //
-    // Initialization of 'Framewin'
+    // Initialization of 'oscilloscopeFramewin'
     //
     hItem = pMsg->hWin;
     FRAMEWIN_SetText(hItem, "E-Kit | HXN YZW LT WS SWZ");
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     FRAMEWIN_SetFont(hItem, GUI_FONT_16B_1);
+    FRAMEWIN_SetTitleVis(hItem, 0);
     //
     // Initialization of 'Radio'
     //
@@ -855,7 +856,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
     TEXT_SetText(hItem, "Output: F=(Hz)");
     // USER START (Optionally insert additional code for further widget initialization)
-        
+    hItem = pMsg->hWin;
+    WIDGET_SetEffect(hItem,&WIDGET_Effect_None);//Òþ²ØFRAMEWINÐ§¹û
+    
         BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGREEN);
 //        SPINBOX_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),mV_div);
 //        WM_Paint(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1));
@@ -1174,10 +1177,10 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 */
 /*********************************************************************
 *
-*       CreateFramewin
+*       CreateoscilloscopeFramewin
 */
-WM_HWIN CreateFramewin(void);
-WM_HWIN CreateFramewin(void) {
+WM_HWIN CreateoscilloscopeFramewin(void);
+WM_HWIN CreateoscilloscopeFramewin(void) {
   WM_HWIN hWin;
 
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);

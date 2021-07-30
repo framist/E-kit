@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -737,9 +737,29 @@
           <GroupName>GUIBulder</GroupName>
           <Files>
             <File>
-              <FileName>FramewinDLG.c</FileName>
+              <FileName>AFCFramewinDLG.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\GUIBulder\FramewinDLG.c</FilePath>
+              <FilePath>..\GUIBulder\AFCFramewinDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>LogWindowDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUIBulder\LogWindowDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>mainFramewinDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUIBulder\mainFramewinDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>oscilloscopeFramewinDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUIBulder\oscilloscopeFramewinDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>SingalWindowDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUIBulder\SingalWindowDLG.c</FilePath>
             </File>
           </Files>
         </Group>

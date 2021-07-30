@@ -11,6 +11,10 @@
         "usart.h": "c",
         "string.h": "c",
         "main.h": "c",
-        "ad9850.h": "c"
+        "ad9850.h": "c",
+        "this_output.h": "c",
+        "framewindlg.h": "c",
+        "windowdlg.h": "c",
+        "wm.h": "c"
     },
 }

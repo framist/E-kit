@@ -1,7 +1,6 @@
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
-
 #include "led.h"
 #include "lcd.h"
 #include "key.h"
@@ -11,14 +10,17 @@
 #include "sram.h"
 #include "timer.h"
 #include "malloc.h"
-#include "GUI.h"
-#include "FramewinDLG.h"
 #include "adc.h"
 #include "24l01.h" // 无线通讯功能
 #include "SYN6288.h" //语音功能
 #include "AD9850.h" //AD9851
 #include "this_output.h"
 #include <stdio.h>
+
+//GUI支持
+#include "GUI.h"
+#include "FramewinDLG.h"
+
 /************************************************
  ALIENTEK 精英STM32F103开发板
  物理学术竞赛
@@ -76,20 +78,25 @@ int main(void)
     
     NRF24L01_Init();    		    	//初始化NRF24L01 无线模块
     
-    //更换皮肤
-    //    #include "DIALOG.h"
-    //	BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX); 
-    //	CHECKBOX_SetDefaultSkin(CHECKBOX_SKIN_FLEX);
-    //	DROPDOWN_SetDefaultSkin(DROPDOWN_SKIN_FLEX);
-    //	FRAMEWIN_SetDefaultSkin(FRAMEWIN_SKIN_FLEX);
-    //	HEADER_SetDefaultSkin(HEADER_SKIN_FLEX);
-    //	MENU_SetDefaultSkin(MENU_SKIN_FLEX);
-    //	MULTIPAGE_SetDefaultSkin(MULTIPAGE_SKIN_FLEX);
-    //	PROGBAR_SetDefaultSkin(PROGBAR_SKIN_FLEX);
-    //	RADIO_SetDefaultSkin(RADIO_SKIN_FLEX);
-    //	SCROLLBAR_SetDefaultSkin(SCROLLBAR_SKIN_FLEX);
-    //	SLIDER_SetDefaultSkin(SLIDER_SKIN_FLEX);
-    //	SPINBOX_SetDefaultSkin(SPINBOX_SKIN_FLEX);
+// 更换皮肤
+// #define USE_SKIN_FLEX
+#ifdef USE_SKIN_FLEX
+#include "DIALOG.h"
+    BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX); 
+    CHECKBOX_SetDefaultSkin(CHECKBOX_SKIN_FLEX);
+    DROPDOWN_SetDefaultSkin(DROPDOWN_SKIN_FLEX);
+    FRAMEWIN_SetDefaultSkin(FRAMEWIN_SKIN_FLEX);
+    HEADER_SetDefaultSkin(HEADER_SKIN_FLEX);
+    MENU_SetDefaultSkin(MENU_SKIN_FLEX);
+    MULTIPAGE_SetDefaultSkin(MULTIPAGE_SKIN_FLEX);
+    PROGBAR_SetDefaultSkin(PROGBAR_SKIN_FLEX);
+    RADIO_SetDefaultSkin(RADIO_SKIN_FLEX);
+    SCROLLBAR_SetDefaultSkin(SCROLLBAR_SKIN_FLEX);
+    SLIDER_SetDefaultSkin(SLIDER_SKIN_FLEX);
+    SPINBOX_SetDefaultSkin(SPINBOX_SKIN_FLEX);
+#endif
+    
+
     void True_mV_To_aPoints(void);
     void plot_aPoint(WM_HWIN hWin);
     void LogPrint(char *log, WM_HWIN  hWin);
@@ -100,14 +107,18 @@ int main(void)
     int i;
     int j;
         
-    WM_HWIN hWin;
-	hWin = CreateFramewin(); // 绘制窗口函数
+    
 
+    WM_HWIN CreatemainFramewin(void);
+    CreatemainFramewin();
+
+    
     while(NRF24L01_Check()) {
-        LogPrint("NRF24L01 Error ", hWin);
+        mainLogPrint("NRF24L01 Error ");
 		delay_ms(200);
 	}
     SYN6288_SendVoiceText("[o0][v4]初始化完成");
+    mainLogPrint("\ninit over!");
 	while(1)
 	{
 		GUI_Delay(100); 
@@ -117,10 +128,10 @@ int main(void)
         Measure();
         //绘制
         True_mV_To_aPoints();
-        plot_aPoint(hWin);
+        plot_aPoint(hWin_oscilloscopeFramewin);
         //显示数据
-        refresh_Measure(hWin);
-        LogPrint(".", hWin);
+        refresh_Measure(hWin_oscilloscopeFramewin);
+        LogPrint(".", hWin_oscilloscopeFramewin);
         LED0 = !LED0;
         
         //TOT_TX--------------------
@@ -140,7 +151,7 @@ int main(void)
                 }
                 tmp_buf[32]=0;//加入结束符		   
             }else {
-                LogPrint("Send Failed!", hWin);
+                LogPrint("Send Failed!", hWin_oscilloscopeFramewin);
                 break;
             };
             HAL_Delay(20);

@@ -5,6 +5,9 @@
 
 # 注意：忽略大小写
 
+# .vscode忽略
+.vscode/
+
 # Project Files
 !*.OPT
 *.UVGUI.*

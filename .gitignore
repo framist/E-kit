@@ -8,6 +8,9 @@
 # .vscode忽略
 .vscode/
 
+# keilkill.bat允许
+!keilkilll.bat
+
 # Project Files
 !*.OPT
 *.UVGUI.*

@@ -14,7 +14,7 @@
 #include "24l01.h" // 无线通讯功能
 #include "SYN6288.h" //语音功能
 #include "AD9850.h" //AD9851
-#include "this_output.h"
+#include "wave_output.h"
 #include <stdio.h>
 
 //GUI支持
@@ -24,8 +24,11 @@
 /************************************************
  ALIENTEK 精英STM32F103开发板
  物理学术竞赛
- 一体化万能示波器
+ 一体化万能示波器 E-kit
+
+ 耦合一时爽，重构火葬场！
 ************************************************/
+
 //记录采样数据原始数据的全局变量
 const int NumMeasurePoints = 1024; //200,000Hz采样率情况下采集1024可保证识别到90hz
 uint16_t OrginalV[NumMeasurePoints];
@@ -43,7 +46,7 @@ int main(void)
 {
     HAL_Init();                   	 	//初始化HAL库    
     Stm32_Clock_Init(RCC_PLL_MUL9);   	//设置时钟,72M
-    This_Output_Init();
+    Wave_Output_Init();
     MY_ADC_Init();                      //初始化ADC
 	delay_init(72);               		//初始化延时函数
     //HAL_NVIC_SetPriorityGrouping(NVIC_PriorityGroup_2); 	//设置NVIC中断分组2:2位抢占优先级，2位响应优先级 已有正点原子修改在hal库

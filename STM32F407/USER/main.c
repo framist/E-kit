@@ -7,15 +7,25 @@
 #include "sram.h"
 #include "malloc.h"
 #include "touch.h"
-#include "GUI.h"
 #include "timer.h"
 #include "arm_math.h"  
 #include "GUIDemo.h"
+
+//GUI支持
+#include "GUI.h"
+#include "FramewinDLG.h"
+
 /************************************************
 F4_HAL_emwin
 移植组合：
 正点原子式STM32项目结构 + 正点原子库 + HAL库 + STemWin
-试验成功支持：STM32F103ZGT6
+试验成功支持：STM32F407ZGT6
+
+ ALIENTEK STM32F407ZGT6最小系统版
+ 物理学术竞赛
+ 一体化万能示波器 E-kit
+ 
+ 耦合一时爽，重构火葬场！
 ************************************************/
 
 
@@ -43,16 +53,36 @@ int main(void)
 
 	WM_SetCreateFlags(WM_CF_MEMDEV);//为重绘操作自动使用存储设备
 	GUI_Init();
+    GUI_CURSOR_Show();
 
-//	GUI_SetBkColor(GUI_BLUE);
-//	GUI_Clear();
-//	GUI_DispStringAt("hello, world\n      -- framist",0,0);
-//	HAL_Delay(3000);
 
-	GUIDEMO_Main();
+// 更换皮肤
+// #define USE_SKIN_FLEX
+#ifdef USE_SKIN_FLEX
+#include "DIALOG.h"
+    BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX); 
+    CHECKBOX_SetDefaultSkin(CHECKBOX_SKIN_FLEX);
+    DROPDOWN_SetDefaultSkin(DROPDOWN_SKIN_FLEX);
+    FRAMEWIN_SetDefaultSkin(FRAMEWIN_SKIN_FLEX);
+    HEADER_SetDefaultSkin(HEADER_SKIN_FLEX);
+    MENU_SetDefaultSkin(MENU_SKIN_FLEX);
+    MULTIPAGE_SetDefaultSkin(MULTIPAGE_SKIN_FLEX);
+    PROGBAR_SetDefaultSkin(PROGBAR_SKIN_FLEX);
+    RADIO_SetDefaultSkin(RADIO_SKIN_FLEX);
+    SCROLLBAR_SetDefaultSkin(SCROLLBAR_SKIN_FLEX);
+    SLIDER_SetDefaultSkin(SLIDER_SKIN_FLEX);
+    SPINBOX_SetDefaultSkin(SPINBOX_SKIN_FLEX);
+#endif
+
+    WM_HWIN CreatemainFramewin(void);
+    CreatemainFramewin();
+    
+    mainLogPrint("\ninit over!");
+    
     while(1)
 	{
-		;
+		GUI_Delay(100); 
+        GUI_Exec();
 	} 
 }
 

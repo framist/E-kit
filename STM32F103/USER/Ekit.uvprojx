@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\USER;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F1xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\LCD;..\HARDWARE\KEY;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\TOUCH;..\HARDWARE\W25QXX;..\HARDWARE\THIS_OUTPUT;..\EMWIN\STemWin\Config;..\EMWIN\STemWin\inc;..\HARDWARE\SRAM;..\HARDWARE\MALLOC;..\GUIBulder;..\HARDWARE\TIMER;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\DMA;..\SYSTEM\STM32_FFT;..\HARDWARE\NRF24L01;..\HARDWARE\SYN6288;..\HARDWARE\AD9850</IncludePath>
+              <IncludePath>..\CORE;..\USER;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F1xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\LCD;..\HARDWARE\KEY;..\HARDWARE\24CXX;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\TOUCH;..\HARDWARE\W25QXX;..\HARDWARE\WAVE_OUTPUT;..\EMWIN\STemWin\Config;..\EMWIN\STemWin\inc;..\HARDWARE\SRAM;..\HARDWARE\MALLOC;..\GUIBulder;..\HARDWARE\TIMER;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\DMA;..\SYSTEM\STM32_FFT;..\HARDWARE\NRF24L01;..\HARDWARE\SYN6288;..\HARDWARE\AD9850</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -632,11 +632,6 @@
               <FilePath>..\HARDWARE\W25QXX\w25qxx.c</FilePath>
             </File>
             <File>
-              <FileName>this_output.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\THIS_OUTPUT\this_output.c</FilePath>
-            </File>
-            <File>
               <FileName>sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\SRAM\sram.c</FilePath>
@@ -680,6 +675,11 @@
               <FileName>AD9850.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\AD9850\AD9850.c</FilePath>
+            </File>
+            <File>
+              <FileName>wave_output.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\WAVE_OUTPUT\wave_output.c</FilePath>
             </File>
           </Files>
         </Group>

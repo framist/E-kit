@@ -51,11 +51,12 @@ void TIM6_Init(u16 arr,u16 psc)
     
     HAL_TIM_Base_Start_IT(&TIM6_Handler); //使能定时器3和定时器6更新中断：TIM_IT_UPDATE
 }
+
 //中断取样用
 TIM_HandleTypeDef 	TIM4_Handler;      	//定时器4句柄 
 void TIM4_Init(u16 arr,u16 psc)
 {  
-    TIM4_Handler.Instance=TIM4;                          //通用定时器6
+    TIM4_Handler.Instance=TIM4;                          //通用定时器4
     TIM4_Handler.Init.Prescaler=psc;                     //分频系数
     TIM4_Handler.Init.CounterMode=TIM_COUNTERMODE_UP;    //向上计数器
     TIM4_Handler.Init.Period=arr;                        //自动装载值

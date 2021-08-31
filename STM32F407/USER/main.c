@@ -9,8 +9,8 @@
 #include "touch.h"
 #include "timer.h"
 #include "arm_math.h"  
-#include "GUIDemo.h"
 
+#include "adc.h"
 //GUI支持
 #include "GUI.h"
 #include "FramewinDLG.h"
@@ -24,10 +24,30 @@ F4_HAL_emwin
  ALIENTEK STM32F407ZGT6最小系统版
  物理学术竞赛
  一体化万能示波器 E-kit
+
+版级接口：
+TFTLCD <-> TFTLCD(>=3.5')
+VREF <-跳线帽-> 3.3V
+
+
+耦合一时爽，重构火葬场！
+ 移植重构LOG：
  
- 耦合一时爽，重构火葬场！
+ 
 ************************************************/
 
+//记录采样数据原始数据的全局变量
+const int NumMeasurePoints = 1024; //200,000Hz采样率情况下采集1024可保证识别到90hz
+uint16_t OrginalV[NumMeasurePoints];
+//记录转换为真实值数据的全局变量(现在是真实值，最后需换为转换真实值)
+float True_mV[NumMeasurePoints];
+float Vpp_measured;
+float F_measured = 1000000; //先用高频确保FFT正确
+float DR_measured;
+int sampleF = 200000; //取样频率
+int MODE; 
+int StopRun = 1; //1=Run
+int IOT;
 
 int main(void)
 {
@@ -38,15 +58,17 @@ int main(void)
     
     TIM3_Init(999,83); 	//1KHZ 定时器3设置为1ms
     TIM4_Init(999,839);  //触摸屏扫描速度,100HZ.
-	
+	TIM5_Init(999,0);        //采样用
+    
 	LED_Init();						//初始化LED	
 	KEY_Init();						//初始化KEY
 	TFTLCD_Init();           			//初始化LCD FSMC接口
     TP_Init();				//触摸屏初始化
 	SRAM_Init();					//初始化外部SRAM  
+    MY_ADC_Init();
 	
 	my_mem_init(SRAMIN);			//初始化内部内存池
-	my_mem_init(SRAMEX);			//初始化外部内存池
+	//my_mem_init(SRAMEX);			//不使用外部内存池
 	my_mem_init(SRAMCCM);			//初始化CCM内存池
     
     __HAL_RCC_CRC_CLK_ENABLE();//使能CRC时钟，否则STemWin不能使用
@@ -74,15 +96,38 @@ int main(void)
     SPINBOX_SetDefaultSkin(SPINBOX_SKIN_FLEX);
 #endif
 
+    void True_mV_To_aPoints(void);
+    void plot_aPoint(WM_HWIN hWin);
+    void LogPrint(char *log, WM_HWIN  hWin);
+    void refresh_Measure(WM_HWIN hWin);
+
     WM_HWIN CreatemainFramewin(void);
     CreatemainFramewin();
     
     mainLogPrint("\ninit over!");
     
+    u16 adcx;
+    char stemp[100] = "";
+    extern ADC_HandleTypeDef ADC1_Handler;	
+
     while(1)
 	{
+        adcx=Get_Adc_Average(ADC_CHANNEL_5,20);//获取通道5的转换值，20次取平均
+        sprintf(stemp, "\nGet_Adc_Average:%d", (u16)HAL_ADC_GetValue(&ADC1_Handler));
+        mainLogPrint(stemp);
+        
 		GUI_Delay(100); 
         GUI_Exec();
+        if(StopRun==0) continue;
+        //测量
+        Measure();
+        //绘制
+        True_mV_To_aPoints();
+        plot_aPoint(hWin_oscilloscopeFramewin);
+        //显示数据
+        refresh_Measure(hWin_oscilloscopeFramewin);
+        LogPrint(".", hWin_oscilloscopeFramewin);
+        LED0 = !LED0;
 	} 
 }
 

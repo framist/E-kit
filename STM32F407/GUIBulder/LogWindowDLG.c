@@ -37,7 +37,7 @@
 
 
 // USER START (Optionally insert additional defines)
-#define MAX_MAIN_LOG_LEN 1000
+#define MAX_MAIN_LOG_LEN 300
 // USER END
 
 /*********************************************************************

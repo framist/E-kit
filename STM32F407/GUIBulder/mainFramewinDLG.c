@@ -106,11 +106,11 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     WIDGET_SetEffect(hItem,&WIDGET_Effect_None);//Òþ²ØFRAMEWINÐ§¹û
   
     hItem = WM_GetDialogItem(pMsg->hWin, ID_MULTIPAGE_0);
-//  
-//    WM_HWIN CreateoscilloscopeFramewin(void);
-//    hWin_oscilloscopeFramewin = CreateoscilloscopeFramewin(); 
-//    MULTIPAGE_AttachWindow(hItem,0,hWin_oscilloscopeFramewin);
-//  
+  
+    WM_HWIN CreateoscilloscopeFramewin(void);
+    hWin_oscilloscopeFramewin = CreateoscilloscopeFramewin(); 
+    MULTIPAGE_AttachWindow(hItem,0,hWin_oscilloscopeFramewin);
+  
     WM_HWIN CreateSingalWindow(void);
     hWin_SingalWindow = CreateSingalWindow();
     MULTIPAGE_AttachWindow(hItem,1,hWin_SingalWindow);

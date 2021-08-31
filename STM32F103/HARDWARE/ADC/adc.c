@@ -95,8 +95,8 @@ void Measure(void){
     extern int us_div;
     extern TIM_HandleTypeDef 	TIM4_Handler;      	//¶¨Ê±Æ÷4¾ä±ú 
     int i;
-    float max_mV = -5;
-    float min_mV = 5;
+    float max_mV = -5000;
+    float min_mV = 5000;
     float temp;
     float sum = 0;
     float offSet;

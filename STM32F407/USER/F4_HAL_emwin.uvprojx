@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\USER;..\OBJ;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F4xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\24CXX;..\HARDWARE\W25QXX;..\MALLOC;..\DSP_LIB\Include;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\EMWIN\Demo;..\GUIBulder</IncludePath>
+              <IncludePath>..\CORE;..\USER;..\OBJ;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F4xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\24CXX;..\HARDWARE\W25QXX;..\MALLOC;..\DSP_LIB\Include;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\GUIBulder;..\HARDWARE\WAVE_OUTPUT;..\HARDWARE\ADC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -521,6 +521,16 @@
               <FileType>1</FileType>
               <FilePath>..\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HALLIB\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -616,6 +626,16 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\TOUCH\ott2001a.c</FilePath>
             </File>
+            <File>
+              <FileName>wave_output.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\WAVE_OUTPUT\wave_output.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ADC\adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -630,16 +650,6 @@
               <FileName>arm_math.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\DSP_LIB\Include\arm_math.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>README</GroupName>
-          <Files>
-            <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\readme.txt</FilePath>
             </File>
           </Files>
         </Group>
@@ -850,6 +860,11 @@
               <FileName>AFCFramewinDLG.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\GUIBulder\AFCFramewinDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>oscilloscopeFramewinDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUIBulder\oscilloscopeFramewinDLG.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -49,7 +49,7 @@ void MX_DAC_Init(void)
   }
   /** DAC channel OUT1 config
   */
-  sConfig.DAC_Trigger = DAC_TRIGGER_T2_TRGO;
+  sConfig.DAC_Trigger = DAC_TRIGGER_T2_TRGO; // ??? TIM2 TRGO selected as external conversion trigger for DAC channel
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {

@@ -26,9 +26,10 @@ F4_HAL_emwin
  一体化万能示波器 E-kit
 
 版级接口：
-TFTLCD <-> TFTLCD(>=3.5')
+TFTLCD <-排线-> TFTLCD(>=3.5')
 VREF <-跳线帽-> 3.3V
-
+PA5 <--> adc输入
+PA4 <--> dac输出
 
 耦合一时爽，重构火葬场！
  移植重构LOG：

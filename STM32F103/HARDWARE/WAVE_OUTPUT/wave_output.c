@@ -1,4 +1,4 @@
-#include "wave_output.h" // TUDO ¸ü¸ÄÃû×Öthis_output -> wave_output
+#include "wave_output.h" 
 #include "dac.h"
 #include "dma.h"
 #include "timer.h"

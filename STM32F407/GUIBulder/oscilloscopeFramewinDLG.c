@@ -660,19 +660,19 @@ void True_mV_To_aPoints(void) {
         k = 1.0;
     }
     for (i = 0; i < _aNumPoints ; i++) {
-        _aPoint[i].x = (int)(i * 50.0 * k / us_div )-250;
-        _aPoint[i].y = (int)( True_mV[i]/((float)mV_div)*10.0) + 250;
+        _aPoint[i].x = (int)(i * 50.0f * k / us_div )-250;
+        _aPoint[i].y = (int)( True_mV[i]/((float)mV_div)*10.0f) + 250;
     }
     //更新坐标轴
     // 修改垂直刻度
     GRAPH_SCALE_SetOff(_hScaleV, 250);//刻度对象的偏移
-    GRAPH_SCALE_SetFactor(_hScaleV, (float)mV_div/10.0 );//坐标缩放
+    GRAPH_SCALE_SetFactor(_hScaleV, (float)mV_div/10.0f );//坐标缩放
 //    GRAPH_SCALE_SetNumDecs(_hScaleV,2);
 
     //GRAPH_AttachScale(hItem, _hScaleV);
     // 修改水平刻度
     //GRAPH_SCALE_SetOff(_hScaleH, 0);//刻度对象的偏移
-    GRAPH_SCALE_SetFactor(_hScaleH, (float)us_div/10.0);//坐标缩放 10像素=us_div 单位us 
+    GRAPH_SCALE_SetFactor(_hScaleH, (float)us_div/10.0f);//坐标缩放 10像素=us_div 单位us 
     //GRAPH_SCALE_SetNumDecs(_hScaleH,0);
     //GRAPH_SCALE_SetTextColor(_hScaleH, GUI_DARKGREEN);
 
@@ -721,17 +721,17 @@ void refresh_Measure(WM_HWIN hWin){
     extern float DR_measured;
     char stemp[100] = "";
     // 'Text_Vpp'
-    sprintf(stemp, "Vpp=%.2fV", Vpp_measured/1000.0);
+    sprintf(stemp, "Vpp=%.2fV", Vpp_measured/1000.0f);
     TEXT_SetText(WM_GetDialogItem(hWin, ID_TEXT_1), stemp);
     // 'Text_DR'
-    if(DR_measured<0.05){
+    if(DR_measured<0.05f){
         sprintf(stemp, "DR= Not SW");
     } else {
-        sprintf(stemp, "DR=%.2f%%", DR_measured*100.0);
+        sprintf(stemp, "DR=%.2f%%", DR_measured*100.0f);
     }
     TEXT_SetText(WM_GetDialogItem(hWin, ID_TEXT_2), stemp);
     //  'Text_F'
-    sprintf(stemp, "F=%.3fkHz", F_measured/1000.0);
+    sprintf(stemp, "F=%.3fkHz", F_measured/1000.0f);
     TEXT_SetText(WM_GetDialogItem(hWin, ID_TEXT_3), stemp);
     
     RADIO_SetValue(WM_GetDialogItem(hWin, ID_RADIO_0),MODE );

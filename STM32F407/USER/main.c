@@ -28,8 +28,8 @@ F4_HAL_emwin
 版级接口：
 TFTLCD <-排线-> TFTLCD(>=3.5')
 VREF <-跳线帽-> 3.3V
-PA5 <--> adc输入
-PA4 <--> dac输出
+PA5 <-- adc输入
+PA4 --> dac输出
 
 耦合一时爽，重构火葬场！
  移植重构LOG：
@@ -115,7 +115,7 @@ int main(void)
 	{
 
         
-		GUI_Delay(500); 
+		GUI_Delay(100); 
         GUI_Exec();
         if(StopRun==0) continue;
         //测量

@@ -37,12 +37,14 @@ void Wave_Output_Init(void)
     TIM6->ARR = arr;
     //HAL_DAC_Stop(&hdac,DAC_CHANNEL_1);
 }
-
+/**
+ * @brief 
+ * 
+ * @param f 输出频率，单位Hz
+ */
 void Wave_Output_F(float f)
 {
-//    uint16_t arr; //对应重置装载
-//    arr = 84000000 / (N * (uint16_t)f) - 1;
-//    TIM6->ARR = arr;
+    TIM6->ARR = (uint16_t)(1000000 * 84 / (N * f) - 1);
 }
 
 /**

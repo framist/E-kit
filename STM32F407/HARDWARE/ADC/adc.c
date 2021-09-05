@@ -80,10 +80,6 @@ u16 Get_Adc_Average(u32 ch,u8 times)
 
 //按时间采样一轮，记录数据到全局数组
 float wave_frequency_calculate(void);
-//临时
-float wave_frequency_calculate(void){
-    return 10000;
-}
 volatile int iNumMeasurePoints;
 void Measure(void){
     extern const int NumMeasurePoints;
@@ -93,7 +89,7 @@ void Measure(void){
     extern float F_measured;
     extern float DR_measured;
     extern int MODE; 
-    extern int sampleF;
+    extern int sampleF; //取样频率
     extern int us_div;
     extern TIM_HandleTypeDef 	TIM5_Handler;      	//定时器4句柄 
     int i;
@@ -109,13 +105,9 @@ void Measure(void){
     HAL_ADC_ConfigChannel(&ADC1_Handler,&ADC1_ChanConf);        //通道配置
     HAL_ADC_Start(&ADC1_Handler);                               //开启ADC
     
-//    for(i=0; i<NumMeasurePoints; i++){
-//        OrginalV[i] = (u16)HAL_ADC_GetValue(&ADC1_Handler);     //返回最近一次ADC1规则组的转换结果
-//    }
-    
     //定时器溢出频率计算: F = Ft/((arr+1)*(psc+1)) us.
     // arr  ; psc = 0 ; 1ms
-    //Ft=定时器工作频率,F1:72Mhz; F4:168Mhz
+    //Ft=定时器工作频率,F1:72Mhz; F4:84Mhz
     // arr = Ft/F - 1   ; Fmax~200,000;一次取样5us
     //F 自动调节；
     if (sampleF == 200000 && F_measured<2000) {
@@ -126,6 +118,7 @@ void Measure(void){
         us_div = 100; //强制改变 us_div
     }
     TIM5->ARR = (uint16_t)(84000000/(sampleF) - 1); 
+    
     iNumMeasurePoints = 0;
     HAL_TIM_Base_Start_IT(&TIM5_Handler);     //使能
     while(iNumMeasurePoints < NumMeasurePoints);

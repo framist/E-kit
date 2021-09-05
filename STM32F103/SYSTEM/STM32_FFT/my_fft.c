@@ -66,14 +66,13 @@ float wave_frequency_calculate(void)
     sample_arr = TIM4->ARR;
     k = adc_sample();
 	uint32_t Max_Val=0;
-			for(i=2;i<NPT/2;i++)
-		{
-			if(lBufMagArray[i]>Max_Val)
-			{
-				Max_Val=lBufMagArray[i];
-				frequency_max_position=i;
-			}
-		}
+	for(i=2;i<NPT/2;i++){
+        if(lBufMagArray[i]>Max_Val)
+        {
+            Max_Val=lBufMagArray[i];
+            frequency_max_position=i;
+        }
+    }
 	sample_frequency = 72000000.0 / (float)((sample_arr + 1) * (sample_psc + 1)) / (float)k;
     wave_frequency = (float)frequency_max_position * sample_frequency / NPT;
     return wave_frequency;

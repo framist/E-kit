@@ -88,7 +88,7 @@ void Measure(void){
     extern float Vpp_measured;
     extern float F_measured;
     extern float DR_measured;
-    extern int MODE; 
+    extern enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form; 
     extern int sampleF; //取样频率
     extern int us_div;
     extern TIM_HandleTypeDef 	TIM5_Handler;      	//定时器4句柄 
@@ -160,15 +160,15 @@ void Measure(void){
     //offSet
     offSet = sum / (float)(nTPoints) ; 
 
-    //占空比 (如果强制MODE == 3，则可测)
-    if(MODE == 3) {
+    //占空比 (如果强制Input_Wave_Form == 3，则可测)
+    if(Input_Wave_Form == Input_Wave_Form_SQU) {
         DR_measured = (offSet-min_mV)/Vpp_measured;
     }
     
     //波形判断
     //首先排除方波:有偏置电压
     if ( Vpp_measured - max_d < Vpp_measured/2.0f){ 
-        MODE = 3;
+        Input_Wave_Form = Input_Wave_Form_SQU;
     }else {
         //积分判别波形
         sum = 0;
@@ -178,10 +178,10 @@ void Measure(void){
         temp = (Vpp_measured*1.15f)*(float)nTPoints/4.0f;
         if( sum <= temp ) {
             //三角
-            MODE = 2;
+            Input_Wave_Form = Input_Wave_Form_TRI;
         }else {
             //正弦
-            MODE = 1;
+            Input_Wave_Form = Input_Wave_Form_SIN;
         }
     }
 }

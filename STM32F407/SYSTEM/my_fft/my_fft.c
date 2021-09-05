@@ -50,7 +50,7 @@ float wave_frequency_calculate(void)
 
     //初始化scfft结构体，设定FFT相关参数
     arm_cfft_radix4_instance_f32 scfft;
-    arm_cfft_radix4_init_f32(&scfft,FFT_LENGTH,0,1);
+    arm_cfft_radix4_init_f32(&scfft,FFT_LENGTH,0,1); // TODO 不知道加上按位取反的原理
     //FFT计算（基4）
     arm_cfft_radix4_f32(&scfft,fft_inputbuf);	
     //把运算结果复数求模得幅值 

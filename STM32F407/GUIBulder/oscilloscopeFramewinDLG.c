@@ -571,7 +571,7 @@ static const int   _aNumPoints = 500; //注意栈溢出！！！！！！！！！！
 static GUI_POINT _aPoint[_aNumPoints];
 GRAPH_DATA_Handle  _ahDataXY;
 //功能相关
-extern int MODE; 
+extern enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form; 
 extern int StopRun; 
 int us_div=100;
 int mV_div=500;
@@ -734,7 +734,7 @@ void refresh_Measure(WM_HWIN hWin){
     sprintf(stemp, "F=%.3fkHz", F_measured/1000.0f);
     TEXT_SetText(WM_GetDialogItem(hWin, ID_TEXT_3), stemp);
     
-    RADIO_SetValue(WM_GetDialogItem(hWin, ID_RADIO_0),MODE );
+    RADIO_SetValue(WM_GetDialogItem(hWin, ID_RADIO_0),Input_Wave_Form );
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_0),us_div);
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_1),mV_div);
     
@@ -940,14 +940,14 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
         LogPrint("\nWarning: You can't change the mode!", pMsg->hWin);
-        RADIO_SetValue(WM_GetDialogItem(pMsg->hWin, ID_RADIO_0),MODE );
+        RADIO_SetValue(WM_GetDialogItem(pMsg->hWin, ID_RADIO_0),Input_Wave_Form );
         //SYN6288_SendVoiceText("[o0][v3]哼啊");
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
         LogPrint("\nWarning: You can't change the mode!", pMsg->hWin);
-        RADIO_SetValue(WM_GetDialogItem(pMsg->hWin, ID_RADIO_0),MODE );
+        RADIO_SetValue(WM_GetDialogItem(pMsg->hWin, ID_RADIO_0),Input_Wave_Form );
         // USER END
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
@@ -1126,7 +1126,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         // USER START (Optionally insert code for reacting on notification message)
         // 方波测试按钮
         LogPrint("\nDR Test Button RELEASED", pMsg->hWin);
-        MODE = 3;
+        Input_Wave_Form = Input_Wave_Form_SQU;
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)

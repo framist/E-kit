@@ -27,7 +27,7 @@ F4_HAL_emwin
 
 版级接口：
 TFTLCD <-排线-> TFTLCD(>=3.5')
-VREF <-跳线帽-> 3.3V
+VREF <-跳线帽- 3.3V
 PA5 <-- adc输入
 PA4 --> dac输出
 
@@ -46,7 +46,8 @@ float Vpp_measured;
 float F_measured = 1000000; //先用高频确保FFT正确
 float DR_measured;
 int sampleF = 200000; //取样频率
-int MODE; 
+
+enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form;
 int StopRun = 1; //1=Run
 int IOT;
 

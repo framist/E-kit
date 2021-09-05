@@ -9,7 +9,7 @@
 #include "touch.h"
 #include "timer.h"
 #include "arm_math.h"  
-
+#include "wave_output.h"
 #include "adc.h"
 //GUI支持
 #include "GUI.h"
@@ -52,7 +52,8 @@ int IOT;
 
 int main(void)
 {
-    HAL_Init();                   	//初始化HAL库    
+    HAL_Init();                   	//初始化HAL库  
+    
     Stm32_Clock_Init(336,8,2,7);  	//设置时钟,168Mhz
 	delay_init(168);               	//初始化延时函数
 	uart_init(115200);             	//初始化USART
@@ -60,12 +61,12 @@ int main(void)
     TIM3_Init(999,83); 	//1KHZ 定时器3设置为1ms
     TIM4_Init(999,839);  //触摸屏扫描速度,100HZ.
 	TIM5_Init(999,0);        //采样用
-    
+    Wave_Output_Init();     //初始化 dac-DMA-tim6 输出 
 	LED_Init();						//初始化LED	
 	KEY_Init();						//初始化KEY
 	TFTLCD_Init();           			//初始化LCD FSMC接口
     TP_Init();				//触摸屏初始化
-	SRAM_Init();					//初始化外部SRAM  
+	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
 	
 	my_mem_init(SRAMIN);			//初始化内部内存池
@@ -107,17 +108,14 @@ int main(void)
     
     mainLogPrint("\ninit over!");
     
-    u16 adcx;
     char stemp[100] = "";
     extern ADC_HandleTypeDef ADC1_Handler;	
 
     while(1)
 	{
-        adcx=Get_Adc_Average(ADC_CHANNEL_5,20);//获取通道5的转换值，20次取平均
-        sprintf(stemp, "\nGet_Adc_Average:%d", (u16)HAL_ADC_GetValue(&ADC1_Handler));
-        mainLogPrint(stemp);
+
         
-		GUI_Delay(100); 
+		GUI_Delay(500); 
         GUI_Exec();
         if(StopRun==0) continue;
         //测量

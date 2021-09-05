@@ -104,7 +104,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 		HAL_NVIC_SetPriority(TIM5_IRQn,1,2);    //设置中断优先级，抢占优先级1，子优先级2
 		HAL_NVIC_EnableIRQ(TIM5_IRQn);          //开启ITM5中断   
 	}
-
+    if(htim->Instance==TIM6) {
+        /* TIM6 clock enable */
+        __HAL_RCC_TIM6_CLK_ENABLE();
+    }
 }
 
 //定时器3中断服务函数

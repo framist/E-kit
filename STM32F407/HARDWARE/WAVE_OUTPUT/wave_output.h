@@ -8,5 +8,5 @@
 void Error_Handler(void);
 
 void Wave_Output_Init(void);
-void Wave_Output_F(int f);
+void Wave_Output_F(float f);
 #endif

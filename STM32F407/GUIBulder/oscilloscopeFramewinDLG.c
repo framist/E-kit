@@ -571,7 +571,7 @@ static const int   _aNumPoints = 500; //注意栈溢出！！！！！！！！！！
 static GUI_POINT _aPoint[_aNumPoints];
 GRAPH_DATA_Handle  _ahDataXY;
 //功能相关
-extern enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form; 
+extern enum {Wave_Form_NA, Wave_Form_SIN, Wave_Form_TRI, Wave_Form_SQU} Input_Wave_Form; 
 extern int StopRun; 
 int us_div=100;
 int mV_div=500;
@@ -1126,7 +1126,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         // USER START (Optionally insert code for reacting on notification message)
         // 方波测试按钮
         LogPrint("\nDR Test Button RELEASED", pMsg->hWin);
-        Input_Wave_Form = Input_Wave_Form_SQU;
+        Input_Wave_Form = Wave_Form_SQU;
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)

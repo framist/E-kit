@@ -1,3 +1,4 @@
+#include "main.h"
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
@@ -47,7 +48,7 @@ float F_measured = 1000000; //先用高频确保FFT正确
 float DR_measured;
 int sampleF = 200000; //取样频率
 
-enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form;
+enum Wave_Form Input_Wave_Form;
 int StopRun = 1; //1=Run
 int IOT;
 
@@ -59,14 +60,14 @@ int main(void)
 	delay_init(168);               	//初始化延时函数
 	uart_init(115200);             	//初始化USART
     
-    TIM3_Init(999,83); 	//1KHZ 定时器3设置为1ms
-    TIM4_Init(999,839);  //触摸屏扫描速度,100HZ.
-	TIM5_Init(999,0);        //采样用
-    Wave_Output_Init();     //初始化 dac-DMA-tim6 输出 
+    TIM3_Init(999,83); 	            //1KHZ 定时器3设置为1ms
+    TIM4_Init(999,839);             //触摸屏扫描速度,100HZ.
+	TIM5_Init(999,0);               //采样用
+    Wave_Output_Init();             //初始化 dac-DMA-tim6 输出 
 	LED_Init();						//初始化LED	
 	KEY_Init();						//初始化KEY
-	TFTLCD_Init();           			//初始化LCD FSMC接口
-    TP_Init();				//触摸屏初始化
+	TFTLCD_Init();           	    //初始化LCD FSMC接口
+    TP_Init();				        //触摸屏初始化
 	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
 	
@@ -109,7 +110,6 @@ int main(void)
     
     mainLogPrint("\ninit over!");
     
-    char stemp[100] = "";
     extern ADC_HandleTypeDef ADC1_Handler;	
 
     while(1)

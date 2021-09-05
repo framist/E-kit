@@ -1,3 +1,4 @@
+#include "main.h"
 #include "adc.h"
 #include "delay.h"
 #include <math.h>
@@ -88,7 +89,7 @@ void Measure(void){
     extern float Vpp_measured;
     extern float F_measured;
     extern float DR_measured;
-    extern enum {Input_Wave_Form_NA, Input_Wave_Form_SIN, Input_Wave_Form_TRI, Input_Wave_Form_SQU} Input_Wave_Form; 
+    extern enum Wave_Form Input_Wave_Form; 
     extern int sampleF; //取样频率
     extern int us_div;
     extern TIM_HandleTypeDef 	TIM5_Handler;      	//定时器4句柄 
@@ -161,14 +162,14 @@ void Measure(void){
     offSet = sum / (float)(nTPoints) ; 
 
     //占空比 (如果强制Input_Wave_Form == 3，则可测)
-    if(Input_Wave_Form == Input_Wave_Form_SQU) {
+    if(Input_Wave_Form == Wave_Form_SQU) {
         DR_measured = (offSet-min_mV)/Vpp_measured;
     }
     
     //波形判断
     //首先排除方波:有偏置电压
     if ( Vpp_measured - max_d < Vpp_measured/2.0f){ 
-        Input_Wave_Form = Input_Wave_Form_SQU;
+        Input_Wave_Form = Wave_Form_SQU;
     }else {
         //积分判别波形
         sum = 0;
@@ -178,10 +179,10 @@ void Measure(void){
         temp = (Vpp_measured*1.15f)*(float)nTPoints/4.0f;
         if( sum <= temp ) {
             //三角
-            Input_Wave_Form = Input_Wave_Form_TRI;
+            Input_Wave_Form = Wave_Form_TRI;
         }else {
             //正弦
-            Input_Wave_Form = Input_Wave_Form_SIN;
+            Input_Wave_Form = Wave_Form_SIN;
         }
     }
 }

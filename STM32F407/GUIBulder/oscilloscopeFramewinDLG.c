@@ -27,7 +27,6 @@
 //#include "adc.h"
 //#include "dac.h"
 #include "wave_output.h"
-#include "delay.h"
 #include "main.h"
 //#include "SYN6288.h"
 
@@ -558,8 +557,8 @@ static const U8 _acImage_0[20056] = {
 // USER START (Optionally insert additional static data)
 //log 相关
 #define LOGS_MAX_LENGTH 1000
-static char Logs[LOGS_MAX_LENGTH] = "* Hu Xianan 19169100008 XDU * --- all rights reserved ---\n"
-                                    "Logs:====================================================";
+static char Logs[LOGS_MAX_LENGTH] = "* framist * --- all rights reserved ---\n"
+                                    "Logs:==================================";
 //* Yexiavqiufeng & Framist *
 //--- all rights reserved ---
 void LogPrint(char *log,WM_HWIN hWin);
@@ -739,7 +738,7 @@ void refresh_Measure(WM_HWIN hWin){
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_0),us_div);
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_1),mV_div);
     
-    
+    LogPrint(".", hWin);
 }
 
 
@@ -873,7 +872,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         RADIO_SetValue(hItem,1);
     
         //
-        // 滑块、微调框初始化
+        // 微调框初始化
         //
         SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),1,9000);
         SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),5); 
@@ -1190,7 +1189,7 @@ WM_HWIN CreateoscilloscopeFramewin(void) {
 
 // USER START (Optionally insert additional public code)
 
-void LogPrint(char *log,WM_HWIN  hWin)
+static void LogPrint(char *log,WM_HWIN  hWin)
 {
     WM_HWIN hItem;
     hItem = WM_GetDialogItem(hWin, ID_TEXT_0);

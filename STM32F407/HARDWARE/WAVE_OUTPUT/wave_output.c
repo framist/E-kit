@@ -84,7 +84,7 @@ void Wave_Output_Init(void)
     
     HAL_TIM_Base_Start(&htim6);
     
-    Wave_Output_Config(Wave_Form_SIN,1000,5,0);
+    Wave_Output_Config(Wave_Form_SIN,1000,5,0,-1);
 }
 
 /**
@@ -98,7 +98,7 @@ void Wave_Output_F(float f) {
     TIM6->ARR = (uint16_t)(1000000 * 84 / (N_WaveData * f) - 1); //已验证正确
 }
 
-int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, float offset)
+int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, float offset, float duty)
 {
     int i;
     float transTrue;

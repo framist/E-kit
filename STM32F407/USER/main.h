@@ -44,13 +44,18 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-// Wave_Form_NA  
-// Wave_Form_SIN 正弦波 ~~~~
-// Wave_Form_TRI 三角波 VVVV
-// Wave_Form_SQU 方波   _||_
-// Wave_Form_SAW_1 锯齿波1 /|/|
-// Wave_Form_SAW_2 锯齿波2 |\|\| 
-enum Wave_Form {Wave_Form_NA, Wave_Form_SIN, Wave_Form_TRI, Wave_Form_SQU, Wave_Form_SAW_1, Wave_Form_SAW_2};
+
+enum Wave_Form
+{
+  Wave_Form_NA,     
+  Wave_Form_SIN,      //正弦波  ~~~~
+  Wave_Form_TRI,      //三角波  VVVV
+  Wave_Form_SQU,      //方波    _||_
+  Wave_Form_SAW_1,    //锯齿波1 /|/|  
+  Wave_Form_SAW_2,    //锯齿波2 |\|\  
+  Wave_Form_RAD,      //噪波    ????
+  Wave_Form_DC        //直流    ----
+};
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

@@ -102,13 +102,12 @@ int main(void)
 
     void True_mV_To_aPoints(void);
     void plot_aPoint(WM_HWIN hWin);
-    void LogPrint(char *log, WM_HWIN  hWin);
     void refresh_Measure(WM_HWIN hWin);
 
     WM_HWIN CreatemainFramewin(void);
     CreatemainFramewin();
     
-    mainLogPrint("\ninit over!");
+    mainLogPrint("\ninit OK!");
     
     extern ADC_HandleTypeDef ADC1_Handler;	
 
@@ -126,7 +125,7 @@ int main(void)
         plot_aPoint(hWin_oscilloscopeFramewin);
         //ÏÔÊ¾Êý¾Ý
         refresh_Measure(hWin_oscilloscopeFramewin);
-        LogPrint(".", hWin_oscilloscopeFramewin);
+        
         LED0 = !LED0;
 	} 
 }

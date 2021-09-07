@@ -88,7 +88,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'LogMultiedit'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_MULTIEDIT_0);
-    MULTIEDIT_SetText(hItem, "");
+    MULTIEDIT_SetText(hItem, "init param: 1LTKvNaux7CjrNHJ09C0y87Eo7/Rrbu3zfm4tKOsus7Ksbb41rmjv9a5zqrWucv51rmjrLTLzsTT1rrOtOajvw==");
     MULTIEDIT_SetFont(hItem, GUI_FONT_8X15B_ASCII);
     // USER START (Optionally insert additional code for further widget initialization)
     hItem = WM_GetDialogItem(pMsg->hWin, ID_MULTIEDIT_0);
@@ -96,7 +96,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     MULTIEDIT_SetWrapChar(hItem); //°´×Ö·ÖÐÐ
     MULTIEDIT_SetAutoScrollV(hItem,1);
     MULTIEDIT_SetMaxNumChars(hItem,MAX_MAIN_LOG_LEN);
-  
+
     // USER END
     break;
   case WM_NOTIFY_PARENT:

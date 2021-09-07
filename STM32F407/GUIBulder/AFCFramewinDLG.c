@@ -107,7 +107,19 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
-
+static void AFC_LogPrint(char *log, WM_MESSAGE *pMsg)
+{
+    WM_HWIN hItem;
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+    if (strlen(log) + strlen(Logs) >= LOGS_MAX_LENGTH)
+    {
+        strcpy(Logs, Logs + LOGS_MAX_LENGTH - 150);
+    }
+    //strcat(Logs,"\n");
+    strcat(Logs, log);
+    TEXT_SetText(hItem, Logs);
+    LED1 = !LED1;
+}
 /*********************************************************************
 *
 *       _InitPoints 画初始函数，测试用
@@ -144,7 +156,7 @@ static void plot_aPoint(WM_MESSAGE *pMsg){
 *
 *       @SignMeasure 单次测量
 */
-float SignMeasure(WM_MESSAGE *pMsg){
+static float SignMeasure(WM_MESSAGE *pMsg){
 
     extern float Vpp_measured;
     Wave_Output_F(F_Ouput);
@@ -304,7 +316,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   int     NCode;
   int     Id;
   // USER START (Optionally insert additional variables)
-    char stemp[100] = "";
+  char stemp[100] = "";
   // USER END
 
   switch (pMsg->MsgId) {
@@ -586,19 +598,7 @@ WM_HWIN CreateAFCFramewin(void) {
 
 // USER START (Optionally insert additional public code)
 
-static void AFC_LogPrint(char *log, WM_MESSAGE *pMsg)
-{
-    WM_HWIN hItem;
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-    if (strlen(log) + strlen(Logs) >= LOGS_MAX_LENGTH)
-    {
-        strcpy(Logs, Logs + LOGS_MAX_LENGTH - 150);
-    }
-    //strcat(Logs,"\n");
-    strcat(Logs, log);
-    TEXT_SetText(hItem, Logs);
-    LED1 = !LED1;
-}
+
 
 // USER END
 

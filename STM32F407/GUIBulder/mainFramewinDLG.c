@@ -59,7 +59,7 @@ WM_HWIN hWin_LogFramewin;
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { FRAMEWIN_CreateIndirect, "mainFramewin", ID_FRAMEWIN_0, 0, 0, 480, 320, 0, 0x0, 0 },
-  { MULTIPAGE_CreateIndirect, "Multipage", ID_MULTIPAGE_0, 0, 0, 471, 314, 0, 0x0, 0 },
+  { MULTIPAGE_CreateIndirect, "Multipage", ID_MULTIPAGE_0, 0, 0, 480, 320, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -123,7 +123,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hWin_LogFramewin = CreateLogWindow();
     MULTIPAGE_AttachWindow(hItem,3,hWin_LogFramewin);
     
-    
+    MULTIPAGE_SelectPage(hItem,0);
     
     
     // USER END

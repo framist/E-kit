@@ -43,7 +43,7 @@ const int NumMeasurePoints = 1024; //200,000Hz采样率情况下采集1024可保证识别到90
 uint16_t OrginalV[NumMeasurePoints];
 //记录转换为真实值数据的全局变量(现在是真实值，最后需换为转换真实值)
 float True_mV[NumMeasurePoints];
-float Vpp_measured;
+float Vpp_measured; //单位mV
 float F_measured = 1000000; //先用高频确保FFT正确
 float DR_measured;
 int sampleF = 200000; //取样频率

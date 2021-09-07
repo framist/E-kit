@@ -28,6 +28,7 @@
 //#include "dac.h"
 #include "wave_output.h"
 #include "delay.h"
+#include "main.h"
 //#include "SYN6288.h"
 
 // USER END
@@ -571,7 +572,7 @@ static const int   _aNumPoints = 500; //注意栈溢出！！！！！！！！！！
 static GUI_POINT _aPoint[_aNumPoints];
 GRAPH_DATA_Handle  _ahDataXY;
 //功能相关
-extern enum {Wave_Form_NA, Wave_Form_SIN, Wave_Form_TRI, Wave_Form_SQU} Input_Wave_Form; 
+extern enum Wave_Form Input_Wave_Form; 
 extern int StopRun; 
 int us_div=100;
 int mV_div=500;

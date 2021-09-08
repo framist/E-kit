@@ -159,7 +159,7 @@ static void plot_aPoint(WM_MESSAGE *pMsg){
 static float SignMeasure(WM_MESSAGE *pMsg){
 
     extern float Vpp_measured;
-    Wave_Output_F(F_Ouput);
+    Wave_Output_Config_F(F_Ouput);
 
 /*    原始方式
     u32 nus = 1.0/F_Ouput*1000000.0 * 30.0; //测30次
@@ -368,54 +368,54 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetFont(hItem, GUI_FONT_16_1);
     // USER START (Optionally insert additional code for further widget initialization)
     
-        //
-        // 滑块、微调框初始化
-        //
+    //
+    // 滑块、微调框初始化
+    //
 
-        SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0), 100, 10000);
-        SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),100,10000);
-        SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),10); //频率步进扩展至 10Hz
-        //
-        // Initialization of 'GRAPH' 图像初始化
-        //
-        hItem = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
-        //GRAPH_SetVSizeX(hItem,550);
-        _InitPoints();
-        //
-        // Add graphs 绘制函数
-        //
-        
-        _ahDataXY = GRAPH_DATA_XY_Create(GUI_LIGHTGREEN, _aNumPoints, _aPoint, _aNumPoints);
-        GRAPH_DATA_XY_SetLineStyle(_ahDataXY, GUI_LS_SOLID);
-        GRAPH_AttachData(hItem, _ahDataXY);
-        
-        //GRAPH_DATA_XY_SetOwnerDraw(_ahDataXY, _OwnerDraw);
-        GRAPH_DATA_XY_SetLineVis(_ahDataXY,1);
-        GRAPH_DATA_XY_SetPenSize(_ahDataXY,1);
-        
-        //
-        // Set graph attributes 设置从一条网格线到下一网格线的距离
-        //
-        GRAPH_SetGridDistY(hItem, 25);
-        GRAPH_SetGridVis(hItem, 1);
-        //
-        // Create and add vertical scale 创建并添加垂直刻度
-        //
-        _hScaleV = GRAPH_SCALE_Create( 35, GUI_TA_RIGHT, GRAPH_SCALE_CF_VERTICAL, 25);
-        //GRAPH_SCALE_SetOff(_hScaleV, 100);//刻度对象的偏移
-        //GRAPH_SCALE_SetFactor(_hScaleV, 0.04f);//坐标缩放
-        GRAPH_SCALE_SetTextColor(_hScaleV, GUI_RED);
-        GRAPH_SetLineStyleV(hItem, GUI_LS_DOT);
-        GRAPH_AttachScale(hItem, _hScaleV);
-        //
-        // Create and add horizontal scale 创建并添加水平刻度
-        //
-        _hScaleH = GRAPH_SCALE_Create(170, GUI_TA_HCENTER, GRAPH_SCALE_CF_HORIZONTAL, 50);
-        //GRAPH_SCALE_SetOff(_hScaleH, 220-550);//刻度对象的偏移
-        //GRAPH_SCALE_SetFactor(_hScaleH, 0.02f);//坐标缩放
-        GRAPH_SCALE_SetTextColor(_hScaleH, GUI_DARKGREEN);
-        GRAPH_SetLineStyleH(hItem, GUI_LS_DOT);
-        GRAPH_AttachScale(hItem, _hScaleH);
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0), 100, 10000);
+    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),100,10000);
+    SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),10); //频率步进扩展至 10Hz
+    //
+    // Initialization of 'GRAPH' 图像初始化
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
+    //GRAPH_SetVSizeX(hItem,550);
+    _InitPoints();
+    //
+    // Add graphs 绘制函数
+    //
+    
+    _ahDataXY = GRAPH_DATA_XY_Create(GUI_LIGHTGREEN, _aNumPoints, _aPoint, _aNumPoints);
+    GRAPH_DATA_XY_SetLineStyle(_ahDataXY, GUI_LS_SOLID);
+    GRAPH_AttachData(hItem, _ahDataXY);
+    
+    //GRAPH_DATA_XY_SetOwnerDraw(_ahDataXY, _OwnerDraw);
+    GRAPH_DATA_XY_SetLineVis(_ahDataXY,1);
+    GRAPH_DATA_XY_SetPenSize(_ahDataXY,1);
+    
+    //
+    // Set graph attributes 设置从一条网格线到下一网格线的距离
+    //
+    GRAPH_SetGridDistY(hItem, 25);
+    GRAPH_SetGridVis(hItem, 1);
+    //
+    // Create and add vertical scale 创建并添加垂直刻度
+    //
+    _hScaleV = GRAPH_SCALE_Create( 35, GUI_TA_RIGHT, GRAPH_SCALE_CF_VERTICAL, 25);
+    //GRAPH_SCALE_SetOff(_hScaleV, 100);//刻度对象的偏移
+    //GRAPH_SCALE_SetFactor(_hScaleV, 0.04f);//坐标缩放
+    GRAPH_SCALE_SetTextColor(_hScaleV, GUI_RED);
+    GRAPH_SetLineStyleV(hItem, GUI_LS_DOT);
+    GRAPH_AttachScale(hItem, _hScaleV);
+    //
+    // Create and add horizontal scale 创建并添加水平刻度
+    //
+    _hScaleH = GRAPH_SCALE_Create(170, GUI_TA_HCENTER, GRAPH_SCALE_CF_HORIZONTAL, 50);
+    //GRAPH_SCALE_SetOff(_hScaleH, 220-550);//刻度对象的偏移
+    //GRAPH_SCALE_SetFactor(_hScaleH, 0.02f);//坐标缩放
+    GRAPH_SCALE_SetTextColor(_hScaleH, GUI_DARKGREEN);
+    GRAPH_SetLineStyleH(hItem, GUI_LS_DOT);
+    GRAPH_AttachScale(hItem, _hScaleH);
         
     // USER END
     break;
@@ -459,10 +459,10 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
-                sprintf(stemp, "\nFrequence VALUE CHANGED:%ld", SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0)));
-                AFC_LogPrint(stemp, pMsg);
-                F_Ouput = (int) SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0));
-                SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0),F_Ouput);
+        sprintf(stemp, "\nFrequence VALUE CHANGED:%ld", SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0)));
+        AFC_LogPrint(stemp, pMsg);
+        F_Ouput = (int) SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0));
+        SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0),F_Ouput);
                 
         // USER END
         break;

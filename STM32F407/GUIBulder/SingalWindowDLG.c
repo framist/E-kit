@@ -62,6 +62,15 @@
 */
 
 // USER START (Optionally insert additional static data)
+static int ifOutput = 0;
+
+//绘图相关
+static GRAPH_SCALE_Handle _hScaleV;   // Handle of vertical scale 垂直刻度
+static GRAPH_SCALE_Handle _hScaleH;   // Handle of horizontal scale 水平刻度
+static const int   _aNumPoints = 100; //注意栈溢出！！！！！！！！！！
+static GUI_POINT _aPoint[100];
+static GRAPH_DATA_Handle  _ahDataXY;
+
 // USER END
 
 /*********************************************************************
@@ -114,6 +123,50 @@ static void LogPrint(char *log,WM_HWIN  hWin)
     strcat(Logs, log);
     TEXT_SetText(hItem, Logs);
 }
+
+
+/*********************************************************************
+*
+*       _InitPoints
+*/
+static void _InitPoints(void) {
+    int i;
+    for (i = 0; i < _aNumPoints ; i++) {
+        _aPoint[i].x = (int)(i );
+        _aPoint[i].y = (int) DAC_DMA_Data[(i*2)%_aNumPoints] * 100 / 4096;
+    }
+
+}
+/*********************************************************************
+*
+*       @plot_aPoint 绘aPoint函数
+*/
+static void plot_aPoint(WM_HWIN  hWin){
+    _InitPoints();
+    WM_HWIN hItem;
+    hItem = WM_GetDialogItem(hWin, ID_GRAPH_0);
+    //删除上次绘图的数据
+    GRAPH_DetachData(WM_GetDialogItem(hWin, ID_GRAPH_0),_ahDataXY );
+    GRAPH_DATA_XY_Delete(_ahDataXY);
+    
+    //增加此次绘图的数据
+    //GRAPH_SetVSizeX(hItem,550);
+    _ahDataXY = GRAPH_DATA_XY_Create(GUI_LIGHTGREEN, _aNumPoints, _aPoint, _aNumPoints);
+    GRAPH_AttachData(hItem, _ahDataXY);
+    //WM_Paint(hItem);
+    
+}
+
+static void _output_config(WM_HWIN  hWin){
+    Wave_Output_Config((enum Wave_Form)RADIO_GetValue(WM_GetDialogItem(hWin, ID_RADIO_0)),      //Form
+                        (float)SPINBOX_GetValue(WM_GetDialogItem(hWin, ID_SPINBOX_0)),           //f
+                        (float)SPINBOX_GetValue(WM_GetDialogItem(hWin, ID_SPINBOX_1)) / 1000.0f, //Vpp
+                        (float)SPINBOX_GetValue(WM_GetDialogItem(hWin, ID_SPINBOX_2)) / 1000.0f, //Offset
+                        SPINBOX_GetValue(WM_GetDialogItem(hWin, ID_SPINBOX_3))                   //duty
+    );
+    plot_aPoint(hWin);
+}
+
 // USER END
 
 /*********************************************************************
@@ -125,6 +178,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   int     NCode;
   int     Id;
   // USER START (Optionally insert additional variables)
+  int i;
   char stemp[100] = "";
   // USER END
 
@@ -189,7 +243,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     RADIO_SetText(hItem, "Vpp (+mV)", 1);
     RADIO_SetText(hItem, "Offset (+-mV)", 2);
     RADIO_SetText(hItem, "Duty (if SQU) (+%)", 3);
-    RADIO_SetFont(hItem, GUI_FONT_16B_ASCII);
+    RADIO_SetFont(hItem, GUI_FONT_10_ASCII);
     //
     // Initialization of 'Header'
     //
@@ -203,18 +257,41 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
     TEXT_SetText(hItem, "Log:");
+    TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_BOTTOM);
+    TEXT_SetFont(hItem, GUI_FONT_16_1HK);
     // USER START (Optionally insert additional code for further widget initialization)
+
+    BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGRAY);
 
     // SPINBOX 初始化
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),SPINBOX_EDGE_CENTER);
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),SPINBOX_EDGE_CENTER);
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),SPINBOX_EDGE_CENTER);
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3),SPINBOX_EDGE_CENTER);
-    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),1,100000); //暂时的数值设定
+
+    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),1,50000); //暂时的数值设定
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_2),  1,50000);
+
     SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),0,10000);
-    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),0,5000);
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_1),  0,10000);
+
+    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),-5000,5000);
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0),  -5000,5000);
+
     SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3),0,100);
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_3),  0,100);
     
+
+    // Initialization of 'GRAPH' 图像初始化
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
+    //GRAPH_SetVSizeX(hItem,550);
+    _InitPoints();
+    
+    // Add graphs 绘制函数
+    _ahDataXY = GRAPH_DATA_XY_Create(GUI_LIGHTGREEN, _aNumPoints, _aPoint, _aNumPoints);
+    GRAPH_DATA_XY_SetLineStyle(_ahDataXY, GUI_LS_SOLID);
+    GRAPH_AttachData(hItem, _ahDataXY);
+
     LogPrint("\ninit OK!",pMsg->hWin);
     // USER END
     break;
@@ -238,6 +315,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_2), (int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -256,6 +334,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        sprintf(stemp, "\nRadio Option VALUE CHANGED:%d", RADIO_GetValue(WM_GetDialogItem(pMsg->hWin, ID_RADIO_0)));
+        _output_config(pMsg->hWin);
+        LogPrint(stemp, pMsg->hWin);
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -270,6 +351,15 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_RELEASED:
         // USER START (Optionally insert code for reacting on notification message)
+        LogPrint("\nstop_run Button RELEASED", pMsg->hWin);
+        ifOutput = !ifOutput;
+        if(ifOutput == 0){
+            BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGRAY );
+            Wave_Output_Stop();
+        }else { 
+            BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGREEN);
+            _output_config(pMsg->hWin);
+        }
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -292,6 +382,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_1), (int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -314,6 +405,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0), (int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -336,6 +428,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        SLIDER_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_3), (int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -354,6 +447,31 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_SEL_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+
+        switch (LISTBOX_GetSel(WM_GetDialogItem(pMsg->hWin, ID_LISTBOX_0))) {
+        case 0:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 0", pMsg->hWin); i = 1; break;
+        case 1:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 1", pMsg->hWin); i = 5; break;
+        case 2:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 2", pMsg->hWin); i = 10; break;
+        case 3:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 3", pMsg->hWin); i = 50; break;
+        case 4:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 4", pMsg->hWin); i = 100; break;
+        case 5:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 5", pMsg->hWin); i = 500; break;
+        case 6:
+          LogPrint("\nWM_NOTIFICATION_SEL_CHANGED : 6", pMsg->hWin); i = 1000; break;
+        default:
+          break;
+        }
+
+        SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),i);
+        SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),i);
+        SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),i);
+        SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3),i);
+
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -408,7 +526,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
-
+        _output_config(pMsg->hWin);
         SPINBOX_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),(long int)SLIDER_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0)));
         // USER END
         break;
@@ -428,6 +546,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        _output_config(pMsg->hWin);
+        SPINBOX_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),(long int)SLIDER_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_1)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -446,6 +566,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        _output_config(pMsg->hWin);
+        SPINBOX_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),(long int)SLIDER_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_2)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -464,6 +586,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        _output_config(pMsg->hWin);
+        SPINBOX_SetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3),(long int)SLIDER_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_3)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)

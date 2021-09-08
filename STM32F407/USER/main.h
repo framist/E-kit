@@ -52,7 +52,7 @@ enum Wave_Form
   Wave_Form_TRI,      //三角波  VVVV
   Wave_Form_SQU,      //方波    _||_
   Wave_Form_SAW_1,    //锯齿波1 /|/|  
-  Wave_Form_SAW_2,    //锯齿波2 |\|\  
+  Wave_Form_SAW_2,    //锯齿波2 |\|\|  
   Wave_Form_RAD,      //噪波    ????
   Wave_Form_DC        //直流    ----
 };

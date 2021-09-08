@@ -38,11 +38,13 @@ PA4 --> dac输出
  
 ************************************************/
 
+#define NUM_MEASURE_POINTS 1024 //200,000Hz采样率情况下采集1024可保证识别到90hz
+const int NumMeasurePoints = NUM_MEASURE_POINTS; 
 //记录采样数据原始数据的全局变量
-const int NumMeasurePoints = 1024; //200,000Hz采样率情况下采集1024可保证识别到90hz
-uint16_t OrginalV[NumMeasurePoints];
+//直接采用const作为长度编译不会报错，但VScode代码检查报错，故采用define
+uint16_t OrginalV[NUM_MEASURE_POINTS]; 
 //记录转换为真实值数据的全局变量(现在是真实值，最后需换为转换真实值)
-float True_mV[NumMeasurePoints];
+float True_mV[NUM_MEASURE_POINTS];
 float Vpp_measured; //单位mV
 float F_measured = 1000000; //先用高频确保FFT正确
 float DR_measured;

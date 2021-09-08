@@ -1149,7 +1149,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
-        Wave_Output_F((int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
+        Wave_Output_Config_F((int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
         //AD9850_Update_Freq((float)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
         // USER END
         break;

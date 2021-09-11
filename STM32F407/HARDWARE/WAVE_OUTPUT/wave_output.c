@@ -3,6 +3,7 @@
 #include "dma.h"
 #include "tim.h"
 #include "gpio.h"
+#include "rng.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 // 此项目的控制输出 基于cube-mx生成
@@ -88,7 +89,7 @@ void Wave_Output_Init(void)
     
     HAL_TIM_Base_Start(&htim6);
     
-    Wave_Output_Config(Wave_Form_SIN,1000,5,0,-1);
+    Wave_Output_Config(Wave_Form_NA,1000,5,0,-1);
 }
 
 /**
@@ -142,7 +143,11 @@ void Wave_Output_Config_Form(enum Wave_Form Output_Wave_Form, int duty)
         }
         break;
     case Wave_Form_RAD:
-        // TODO
+        // TODO 得每次都变化
+        for ( i = 0; i < N_WaveData; i++) {
+            FormData[i] =  (float)RNG_Get_RandomRange(0,4095) / 4095.0f * 2.0f - 1.0f;
+        }
+       
         break;
     case Wave_Form_DC:
         for ( i = 0; i < N_WaveData; i++) {

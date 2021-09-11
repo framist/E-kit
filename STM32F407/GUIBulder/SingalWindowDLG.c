@@ -258,7 +258,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
     TEXT_SetText(hItem, "Log:");
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_BOTTOM);
-    TEXT_SetFont(hItem, GUI_FONT_16_1HK);
+    TEXT_SetFont(hItem, GUI_FONT_10_ASCII);
     // USER START (Optionally insert additional code for further widget initialization)
 
     BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGRAY);

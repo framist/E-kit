@@ -12,6 +12,7 @@
 #include "arm_math.h"  
 #include "wave_output.h"
 #include "adc.h"
+#include "rng.h"
 //GUI支持
 #include "GUI.h"
 #include "FramewinDLG.h"
@@ -70,6 +71,13 @@ int main(void)
 	KEY_Init();						//初始化KEY
 	TFTLCD_Init();           	    //初始化LCD FSMC接口
     TP_Init();				        //触摸屏初始化
+    RNG_Init();	 		            //初始化随机数发生器
+    
+//    int i=0;
+//    while(1){
+//        printf("oh, here is the %dth TRNG: %ld \n",i++,(long)RNG_Get_RandomNum());
+//    }
+
 	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
 	

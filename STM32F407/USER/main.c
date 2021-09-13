@@ -33,6 +33,8 @@ VREF <-跳线帽- 3.3V
 PA5 <-- adc输入
 PA4 --> dac输出
 
+printf 已重载为串口输出
+
 耦合一时爽，重构火葬场！
  移植重构LOG：
  
@@ -42,7 +44,7 @@ PA4 --> dac输出
 #define NUM_MEASURE_POINTS 1024 //200,000Hz采样率情况下采集1024可保证识别到90hz
 const int NumMeasurePoints = NUM_MEASURE_POINTS; 
 //记录采样数据原始数据的全局变量
-//直接采用const作为长度编译不会报错，但VScode代码检查报错，故采用define
+//直接采用const作为长度编译不会报错，但代码检查报错，故采用define
 uint16_t OrginalV[NUM_MEASURE_POINTS]; 
 //记录转换为真实值数据的全局变量(现在是真实值，最后需换为转换真实值)
 float True_mV[NUM_MEASURE_POINTS];
@@ -52,8 +54,7 @@ float DR_measured;
 int sampleF = 200000; //取样频率
 
 enum Wave_Form Input_Wave_Form;
-int StopRun = 1; //1=Run
-int IOT;
+
 
 int main(void)
 {
@@ -72,11 +73,6 @@ int main(void)
 	TFTLCD_Init();           	    //初始化LCD FSMC接口
     TP_Init();				        //触摸屏初始化
     RNG_Init();	 		            //初始化随机数发生器
-    
-//    int i=0;
-//    while(1){
-//        printf("oh, here is the %dth TRNG: %ld \n",i++,(long)RNG_Get_RandomNum());
-//    }
 
 	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
@@ -123,11 +119,9 @@ int main(void)
 
     while(1)
 	{
-
-        
 		GUI_Delay(100); 
         GUI_Exec();
-        if(StopRun==0) continue;
+        
         //测量
         Measure();
         //绘制

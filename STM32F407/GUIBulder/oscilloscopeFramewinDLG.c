@@ -572,10 +572,10 @@ static GUI_POINT _aPoint[_aNumPoints];
 GRAPH_DATA_Handle  _ahDataXY;
 //功能相关
 extern enum Wave_Form Input_Wave_Form; 
-extern int StopRun; 
+static enum _osc_MODE {osc_STOP=0, osc_RUN=1} _StopRun = osc_RUN; 
 int us_div=100;
 int mV_div=500;
-
+int IOT;
 //测量相关
 
 
@@ -642,17 +642,19 @@ void _InitPoints(void) {
 
 }
 
-/*********************************************************************
-*
-*       True_mV_To_aPoints
-*   200,000采样率一个点5us
-*/
+/**
+ * @brief 真实数据转化为绘制像素数据，也包括IOT刷新
+ *  200,000采样率一个点5us
+ */
 void True_mV_To_aPoints(void) {
     extern const int NumMeasurePoints;
     extern float True_mV[];
     extern int sampleF;
     int i;
     float k ;
+
+    if(_StopRun==osc_STOP) return;
+
     if(sampleF == 20000){
         //低量程
         k = 10.0;
@@ -662,44 +664,30 @@ void True_mV_To_aPoints(void) {
     for (i = 0; i < _aNumPoints ; i++) {
         _aPoint[i].x = (int)(i * 50.0f * k / us_div )-250;
         _aPoint[i].y = (int)( True_mV[i]/((float)mV_div)*10.0f) + 250;
+        if(IOT) {
+            printf("(%f,%f)\n\t",(float)i,True_mV[i]); // TODO 横坐标精确计算
+        }
     }
     //更新坐标轴
     // 修改垂直刻度
     GRAPH_SCALE_SetOff(_hScaleV, 250);//刻度对象的偏移
     GRAPH_SCALE_SetFactor(_hScaleV, (float)mV_div/10.0f );//坐标缩放
-//    GRAPH_SCALE_SetNumDecs(_hScaleV,2);
 
-    //GRAPH_AttachScale(hItem, _hScaleV);
     // 修改水平刻度
-    //GRAPH_SCALE_SetOff(_hScaleH, 0);//刻度对象的偏移
     GRAPH_SCALE_SetFactor(_hScaleH, (float)us_div/10.0f);//坐标缩放 10像素=us_div 单位us 
-    //GRAPH_SCALE_SetNumDecs(_hScaleH,0);
-    //GRAPH_SCALE_SetTextColor(_hScaleH, GUI_DARKGREEN);
 
 }
 
 
-/*********************************************************************
-*
-*       @plot_aPoint 绘aPoint函数
-*/
-//void plot_aPoint(WM_MESSAGE *pMsg){
-//    WM_HWIN hItem;
-//    
-//    hItem = WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0);
-//    //删除上次绘图的数据
-//    GRAPH_DetachData(WM_GetDialogItem(pMsg->hWin, ID_GRAPH_0),_ahDataXY );
-//    GRAPH_DATA_XY_Delete(_ahDataXY);
-//    
-//    //增加此次绘图的数据
-//    //GRAPH_SetVSizeX(hItem,550);
-//    _ahDataXY = GRAPH_DATA_XY_Create(GUI_LIGHTGREEN, _aNumPoints, _aPoint, _aNumPoints);
-//    GRAPH_AttachData(hItem, _ahDataXY);
-//    //WM_Paint(hItem);
-//    
-//}
-void plot_aPoint(WM_HWIN hWin){
+/**
+ * @brief 绘制图像
+ * 
+ * @param hWin 
+ */
+void plot_aPoint(WM_HWIN hWin) {
     WM_HWIN hItem;
+    
+    if(_StopRun == osc_STOP ) return;
     
     hItem = WM_GetDialogItem(hWin, ID_GRAPH_0);
     //删除上次绘图的数据
@@ -720,6 +708,9 @@ void refresh_Measure(WM_HWIN hWin){
     extern float F_measured;
     extern float DR_measured;
     char stemp[100] = "";
+
+    if(_StopRun == osc_STOP ) return;
+
     // 'Text_Vpp'
     sprintf(stemp, "Vpp=%.2fV", Vpp_measured/1000.0f);
     TEXT_SetText(WM_GetDialogItem(hWin, ID_TEXT_1), stemp);
@@ -737,7 +728,7 @@ void refresh_Measure(WM_HWIN hWin){
     RADIO_SetValue(WM_GetDialogItem(hWin, ID_RADIO_0),Input_Wave_Form );
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_0),us_div);
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_1),mV_div);
-    
+
     LogPrint(".", hWin);
 }
 
@@ -791,7 +782,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'LogText'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-    TEXT_SetText(hItem, "* Hu Xianan 19169100008 XDU * --- all rights reserved ---\nLogs:====================================================");
+    TEXT_SetText(hItem, "* framist * --- all rights reserved ---\nLogs:===================================");
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_BOTTOM);
     TEXT_SetFont(hItem, GUI_FONT_6X8_1);
     //
@@ -806,7 +797,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
-    TEXT_SetText(hItem, "DR =N/A%");
+    TEXT_SetText(hItem, "DR =N/A%%");
     TEXT_SetFont(hItem, GUI_FONT_8X16);
     //
     // Initialization of 'Text_F'
@@ -854,7 +845,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
     TEXT_SetTextAlign(hItem, GUI_TA_LEFT | GUI_TA_VCENTER);
-    TEXT_SetText(hItem, "Output: F=(Hz)");
+    TEXT_SetText(hItem, "shortcut output C:");
     // USER START (Optionally insert additional code for further widget initialization)
     hItem = pMsg->hWin;
     WIDGET_SetEffect(hItem,&WIDGET_Effect_None);//隐藏FRAMEWIN效果
@@ -972,8 +963,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         // USER START (Optionally insert code for reacting on notification message)
         // stop run 按钮 run == 1
         LogPrint("\nstop_run Button RELEASED", pMsg->hWin);
-        StopRun = !StopRun;
-        if(StopRun == 0){
+        _StopRun = 1 - _StopRun;
+        if(_StopRun == osc_STOP){
             BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_RED );
         }else { 
             BUTTON_SetBkColor(WM_GetDialogItem(pMsg->hWin, ID_BUTTON_0),BUTTON_CI_UNPRESSED, GUI_LIGHTGREEN);
@@ -998,7 +989,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         // USER START (Optionally insert code for reacting on notification message)
         sprintf(stemp, "\nIOT Checkbox VALUE_CHANGED:%d", CHECKBOX_GetState(WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0)));
         LogPrint(stemp,  pMsg->hWin);
-        extern int IOT;
+        
         IOT = CHECKBOX_GetState(WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0));
         // USER END
         break;
@@ -1149,8 +1140,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        // TUDO
         Wave_Output_Config_F((int)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
-        //AD9850_Update_Freq((float)SPINBOX_GetValue(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2)));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)

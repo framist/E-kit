@@ -129,7 +129,7 @@ void Measure(void){
     
     for(i=0; i<NumMeasurePoints; i++){
         temp = (float)OrginalV[i]*(3.3f/4096.0f);		    //得到ADC电压值(现在是真实值，最后需换为转换真实值)
-        //temp = (temp - 1.44f)/2.32f*5.0f * 1000.0f;          //跟外置电路有关
+        temp = (temp - 1.65f)*5.0f ;          //跟外置电路有关
         temp = temp * 1000.0f;
         True_mV[i] = temp;
         if(max_mV < True_mV[i]){

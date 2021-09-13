@@ -125,15 +125,17 @@ static void LogPrint(char *log,WM_HWIN  hWin)
 }
 
 
-/*********************************************************************
-*
-*       _InitPoints
-*/
+/**
+ * @brief 转换数据到绘图点数据
+ * 
+ */
 static void _InitPoints(void) {
     int i;
     for (i = 0; i < _aNumPoints ; i++) {
         _aPoint[i].x = (int)(i );
         _aPoint[i].y = (int) DAC_DMA_Data[(i*2)%_aNumPoints] * 100 / 4096;
+        //因外部硬件问题，需反向
+        _aPoint[i].y = 100 - _aPoint[i].y;
     }
 
 }

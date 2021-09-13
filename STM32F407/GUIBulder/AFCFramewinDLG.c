@@ -159,7 +159,7 @@ static void plot_aPoint(WM_MESSAGE *pMsg){
 static float SignMeasure(WM_MESSAGE *pMsg){
 
     extern float Vpp_measured;
-    Wave_Output_Config_F(F_Ouput);
+    Wave_Output_Config(Wave_Form_SIN,F_Ouput,10,0,0);
 
 /*    原始方式
     u32 nus = 1.0/F_Ouput*1000000.0 * 30.0; //测30次

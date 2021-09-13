@@ -157,6 +157,11 @@ void Wave_Output_Config_Form(enum Wave_Form Output_Wave_Form, int duty)
     default:
         break;
     }
+    //因外部硬件问题需反向输出
+    for ( i = 0; i < N_WaveData; i++) {
+        FormData[i] = -FormData[i];
+    }
+
     Wave_Output_Config_VppOffset(5, 0); //Test
 }
 
@@ -172,7 +177,7 @@ void Wave_Output_Config_VppOffset(float Vpp, float offset)
     float transTrue;
     int temp;
     for ( i = 0; i < N_WaveData; i++) {
-        transTrue = FormData[i] * Vpp + offset;
+        transTrue = FormData[i] * Vpp/2.0f - offset; //因外部硬件问题需反向输出 ,故-offset
         //5.0f : 外置电路最大电压
         temp = (int)(transTrue/5.0f*2048.0f+2048.0f); //0位不精确
         temp = temp > 4095 ? 4095 : temp;

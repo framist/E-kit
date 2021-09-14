@@ -95,7 +95,7 @@ void Wave_Output_Init(void)
 /**
  * @brief 暂时使用
  * 
- * @param f 输出频率，单位Hz
+ * @param f 输出频率，单位Hz 防止溢出：20Hz<=f<=840 000Hz
  */
 void Wave_Output_Config_F(float f) {
     // Tout=((arr+1)*(psc+1))/Ft us. Ft=定时器工作频率,单位:Mhz
@@ -186,6 +186,16 @@ void Wave_Output_Config_VppOffset(float Vpp, float offset)
     }
 }
 
+/**
+ * @brief Wave_Output_Config
+ * 
+ * @param Output_Wave_Form 
+ * @param f 
+ * @param Vpp  单位 V
+ * @param offset  单位 V
+ * @param duty 
+ * @return int 
+ */
 int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, float offset, int duty)
 {
 

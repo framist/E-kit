@@ -152,14 +152,16 @@ static void plot_aPoint(WM_MESSAGE *pMsg){
     
 }
 
-/*********************************************************************
-*
-*       @SignMeasure 单次测量
-*/
+/**
+ * @brief 单次测量
+ * 
+ * @param pMsg 
+ * @return float 测量电压值 V
+ */
 static float SignMeasure(WM_MESSAGE *pMsg){
 
     extern float Vpp_measured;
-    Wave_Output_Config(Wave_Form_SIN,F_Ouput,10,0,0);
+    Wave_Output_Config_F(F_Ouput);
 
 /*    原始方式
     u32 nus = 1.0/F_Ouput*1000000.0 * 30.0; //测30次
@@ -190,14 +192,15 @@ static float SignMeasure(WM_MESSAGE *pMsg){
 
     return Vpp_measured/1000.0f;
 }
-/*********************************************************************
-*
-*       @cmpfunc 排序所用的比较函数
-*/
-static int cmpfunc(const void *a, const void *b) {
-    const float *aa = a;
-    const float *bb = b;
-    return (*aa > *bb) - (*aa < *bb);
+
+/**
+ * @brief 计算db 10.0f是原输出电压
+ * 
+ * @param Vpp 
+ * @return float 
+ */
+static float _db(float Vpp){
+    return log10f(Vpp/10.0f)*20.0f;
 }
 /*********************************************************************
 *
@@ -208,23 +211,22 @@ static int AutoMeasure(WM_MESSAGE *pMsg,int ifMeasure){
     int i = 0;
     static float pointsX[100] ; //频率-真实值Hz
     static float pointsY[100] ; //电压-真实值V
-    static float pointsYS[100] ; //用于排序找最大最小值的电压
-    static float mindB;
+    static float mindB = 9999; //最大的db绝对值
+    
+    Wave_Output_Config(Wave_Form_SIN,F_Ouput,10,0,0);
     PROGBAR_SetValue(WM_GetDialogItem(pMsg->hWin, ID_PROGBAR_0),0);//显示 0%
     WM_Paint(WM_GetDialogItem(pMsg->hWin, ID_PROGBAR_0));
     if(ifMeasure == 1){
+        mindB = 9999;
         //100 ~ 10 000 Hz  9 900 / 100 + 1 = 100
         for(F_Ouput = 100; F_Ouput <= 10000; F_Ouput += 100){
             pointsX[i] = (float) F_Ouput;
             pointsY[i] = SignMeasure(pMsg) ;
-            pointsYS[i] = pointsY[i];
+            if(_db(pointsY[i]) < mindB) mindB = _db(pointsY[i]);
             i++;
         }
-
-        qsort(pointsYS, 100, sizeof(float),cmpfunc );//升序
-        mindB = (log10f(pointsYS[0]/2.828f)*20.0f );//最大的db绝对值
-        //float maxdB = (log10f(pointsYS[99]/2.828)*20.0 );  
     }
+
     if(CHECKBOX_GetState(WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0))==0) {
         //普通绘制
         for(i = 0; i < _aNumPoints ; i++ ){   
@@ -232,9 +234,7 @@ static int AutoMeasure(WM_MESSAGE *pMsg,int ifMeasure){
                 pointsY[i] = pointsY[i+1];
             }            
             _aPoint[i].x = (int)( pointsX[i]/10000.0f*200.0f  );
-            _aPoint[i].y = (int)(225 - (log10f(pointsY[i]/2.42f)*20.0f )/mindB *225 );//先转换为db,再装换为像素
-            //plot_aPoint( pMsg);
-
+            _aPoint[i].y = (int)(225 - (_db(pointsY[i]) )/mindB *225 );//先转换为db,再装换为像素
         }
         //画曲线
         plot_aPoint( pMsg);
@@ -257,7 +257,7 @@ static int AutoMeasure(WM_MESSAGE *pMsg,int ifMeasure){
                 pointsY[i] = pointsY[i+1];
             }            
             _aPoint[i].x = (int)( (log10f(pointsX[i])-2)/2.0f*200.0f  );//log10 : 2~4
-            _aPoint[i].y = (int)(225 - (log10f(pointsY[i]/2.42f)*20.0f )/mindB *225 );//先转换为db,再装换为像素
+            _aPoint[i].y = (int)(225 - ( _db(pointsY[i]) )/mindB *225 );//先转换为db,再装换为像素
             //plot_aPoint( pMsg);
         }
         //画曲线
@@ -276,7 +276,7 @@ static int AutoMeasure(WM_MESSAGE *pMsg,int ifMeasure){
         GRAPH_SCALE_SetTextColor(_hScaleH, GUI_DARKCYAN);
         //GRAPH_SCALE_SetTextColor(_hScaleH, GUI_BLACK);//隐藏坐标
     }
-    //滤波器判别  0：低通 1：高通 2：带通 3：带阻
+    //滤波器判别  0：低通 HPF 1：高通 LPF 2：带通 BPF 3：带阻BRF 
     if(pointsY[0] < pointsY[50] && pointsY[50] < pointsY[99]){
         //高通
         filterType = 1;
@@ -325,7 +325,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'AFCFramewin'
     //
     hItem = pMsg->hWin;
-    FRAMEWIN_SetText(hItem, "amplitude - frequency characteristics   |   Yexiaqiufeng, Framist");
+    FRAMEWIN_SetText(hItem, "Amplitude - Frequency  Characteristics");
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     FRAMEWIN_SetFont(hItem, GUI_FONT_16B_1);
     //
@@ -368,13 +368,11 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     TEXT_SetFont(hItem, GUI_FONT_16_1);
     // USER START (Optionally insert additional code for further widget initialization)
     
-    //
     // 滑块、微调框初始化
-    //
-
-    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0), 100, 10000);
-    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),100,10000);
-    SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),10); //频率步进扩展至 10Hz
+    SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),SPINBOX_EDGE_CENTER);
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0), 50, 50000);
+    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),50,50000);
+    SPINBOX_SetStep(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),20); //频率步进扩展至 10Hz
     //
     // Initialization of 'GRAPH' 图像初始化
     //
@@ -489,11 +487,13 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
             
             AFC_LogPrint("\nMode==single measurement", pMsg);
             //单次测量
+            
+            Wave_Output_Config(Wave_Form_SIN,F_Ouput,10,0,0);
             float sm ;
             sm = SignMeasure(pMsg);
-            sprintf(stemp, "\nADC max V =%.2f dB =%.2f",sm, (log10f(sm/2.42f)*20.0f ));
+            sprintf(stemp, "\nADC max V =%.2f dB =%.2f",sm, (_db(sm) ));
             AFC_LogPrint(stemp, pMsg);
-            sprintf(stemp, "F   output: %dHz\n: %.2fV  %.2fdB",F_Ouput,sm,(log10f(sm/2.42f)*20.0f));
+            sprintf(stemp, "F   output: %dHz\n: %.2fV  %.2fdB",F_Ouput,sm,(_db(sm) ));
             TEXT_SetText(WM_GetDialogItem(pMsg->hWin, ID_TEXT_1), stemp);
             TEXT_SetFont(WM_GetDialogItem(pMsg->hWin, ID_TEXT_1), GUI_FONT_8X16);
             WM_Paint(WM_GetDialogItem(pMsg->hWin, ID_TEXT_1));

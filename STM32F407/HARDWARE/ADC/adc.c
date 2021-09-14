@@ -89,6 +89,7 @@ void Measure(void){
     extern float Vpp_measured;
     extern float F_measured;
     extern float DR_measured;
+    extern float Offset_measured;
     extern enum Wave_Form Input_Wave_Form; 
     extern int sampleF; //取样频率
     extern int us_div;
@@ -98,7 +99,8 @@ void Measure(void){
     float min_mV = 5000;
     float temp;
     float sum = 0;
-    float offSet;
+    float DC_measured;
+    
     ADC_ChannelConfTypeDef ADC1_ChanConf;
     ADC1_ChanConf.Channel=ADC_CHANNEL_5;                        //通道 5 (注意)
     ADC1_ChanConf.Rank=1;                                       //第1个序列，序列1
@@ -129,7 +131,7 @@ void Measure(void){
     
     for(i=0; i<NumMeasurePoints; i++){
         temp = (float)OrginalV[i]*(3.3f/4096.0f);		    //得到ADC电压值(现在是真实值，最后需换为转换真实值)
-        temp = (temp - 1.65f)*5.0f ;          //跟外置电路有关
+        temp = (temp - 1.65f)/1.65f*5.0f ;          //跟外置电路有关
         temp = temp * 1000.0f;
         True_mV[i] = temp;
         if(max_mV < True_mV[i]){
@@ -143,6 +145,9 @@ void Measure(void){
 
     //Vpp
     Vpp_measured = max_mV - min_mV;
+    //Offset_measured
+    Offset_measured = (max_mV + min_mV)/2;
+
     //F, Hz
     F_measured = wave_frequency_calculate();
     
@@ -158,12 +163,12 @@ void Measure(void){
             max_d = fabs(True_mV[i]-True_mV[i-1]);
         }
     }
-    //offSet
-    offSet = sum / (float)(nTPoints) ; 
+    //DC_measured
+    DC_measured = sum / (float)(nTPoints) ; 
 
-    //占空比 (如果强制Input_Wave_Form == 3，则可测)
+    //占空比 (如果强制Input_Wave_Form == Wave_Form_SQU，则可测)
     if(Input_Wave_Form == Wave_Form_SQU) {
-        DR_measured = (offSet-min_mV)/Vpp_measured;
+        DR_measured = (DC_measured-min_mV)/Vpp_measured;
     }
     
     //波形判断
@@ -174,7 +179,7 @@ void Measure(void){
         //积分判别波形
         sum = 0;
         for(i=0; i<nTPoints && i<NumMeasurePoints ; i++){
-            sum += fabs( True_mV[i] - offSet );       
+            sum += fabs( True_mV[i] - DC_measured );       
         }
         temp = (Vpp_measured*1.15f)*(float)nTPoints/4.0f;
         if( sum <= temp ) {

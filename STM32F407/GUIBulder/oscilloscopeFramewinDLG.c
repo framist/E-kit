@@ -664,9 +664,10 @@ void True_mV_To_aPoints(void) {
     for (i = 0; i < _aNumPoints ; i++) {
         _aPoint[i].x = (int)(i * 50.0f * k / us_div )-250;
         _aPoint[i].y = (int)( True_mV[i]/((float)mV_div)*10.0f) + 250;
-        if(IOT) {
-            printf("(%f,%f)\n\t",(float)i,True_mV[i]); // TODO 横坐标精确计算
-        }
+//        if(IOT) {
+//            // TODO 横坐标精确计算
+//            printf("{plotter:%.3f}\n",True_mV[i]/1000);
+//        }
     }
     //更新坐标轴
     // 修改垂直刻度
@@ -707,6 +708,7 @@ void refresh_Measure(WM_HWIN hWin){
     extern float Vpp_measured;
     extern float F_measured;
     extern float DR_measured;
+    extern float Offset_measured;
     char stemp[100] = "";
 
     if(_StopRun == osc_STOP ) return;
@@ -729,7 +731,9 @@ void refresh_Measure(WM_HWIN hWin){
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_0),us_div);
     SPINBOX_SetValue(WM_GetDialogItem(hWin, ID_SPINBOX_1),mV_div);
 
-    LogPrint(".", hWin);
+    // offset 中间值
+    sprintf(stemp, "\noffset=%.2fV; ", Offset_measured/1000.0f);    
+    LogPrint(stemp, hWin);
 }
 
 

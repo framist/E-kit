@@ -51,6 +51,7 @@ float True_mV[NUM_MEASURE_POINTS];
 float Vpp_measured; //单位mV
 float F_measured = 1000000; //先用高频确保FFT正确
 float DR_measured;
+float Offset_measured;
 int sampleF = 200000; //取样频率
 
 enum Wave_Form Input_Wave_Form;
@@ -62,7 +63,7 @@ int main(void)
     
     Stm32_Clock_Init(336,8,2,7);  	//设置时钟,168Mhz
 	delay_init(168);               	//初始化延时函数
-	uart_init(115200);             	//初始化USART
+	uart_init(9600);             	//初始化USART
     
     TIM3_Init(999,83); 	            //1KHZ 定时器3设置为1ms
     TIM4_Init(999,839);             //触摸屏扫描速度,100HZ.
@@ -115,7 +116,9 @@ int main(void)
     
     mainLogPrint("\ninit OK!");
     
-    extern ADC_HandleTypeDef ADC1_Handler;	
+    extern ADC_HandleTypeDef ADC1_Handler;
+    extern int IOT;
+    int i;	
 
     while(1)
 	{
@@ -129,6 +132,13 @@ int main(void)
         plot_aPoint(hWin_oscilloscopeFramewin);
         //显示数据
         refresh_Measure(hWin_oscilloscopeFramewin);
+        
+        for (i = 0; i < NUM_MEASURE_POINTS/2 ; i++) {
+            if(IOT) {
+                // TODO 横坐标精确计算
+                printf("{plotter:%.3f}\n",True_mV[i]/1000);
+            }
+        }
         
         LED0 = !LED0;
 	} 

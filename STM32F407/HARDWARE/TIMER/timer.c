@@ -144,9 +144,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(htim==(&TIM5_Handler)){
         //定时单次取样
         if(iNumMeasurePoints >= NumMeasurePoints) return;
-        u16 temp; //debug用
-        temp = (u16)HAL_ADC_GetValue(&ADC1_Handler);
-        OrginalV[iNumMeasurePoints] = temp;     //返回最近一次ADC1规则组的转换结果
+
+        //返回最近一次ADC1规则组的转换结果; 4095-值 是因为外置电路的缘故
+        OrginalV[iNumMeasurePoints] = 4095 - (u16)HAL_ADC_GetValue(&ADC1_Handler);     
         iNumMeasurePoints++;        
     }
 

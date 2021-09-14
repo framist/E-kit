@@ -244,7 +244,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     RADIO_SetText(hItem, "Frequency (+Hz)", 0);
     RADIO_SetText(hItem, "Vpp (+mV)", 1);
     RADIO_SetText(hItem, "Offset (+-mV)", 2);
-    RADIO_SetText(hItem, "Duty (if SQU) (+%)", 3);
+    RADIO_SetText(hItem, "Duty (if SQU) (+%%)", 3);
     RADIO_SetFont(hItem, GUI_FONT_10_ASCII);
     //
     // Initialization of 'Header'
@@ -271,8 +271,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_2),SPINBOX_EDGE_CENTER);
     SPINBOX_SetEdge(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_3),SPINBOX_EDGE_CENTER);
 
-    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),1,50000); //暂时的数值设定
-    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_2),  1,50000);
+    SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_0),20,50000); //暂时的数值设定
+    SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_2),  20,50000);
 
     SPINBOX_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SPINBOX_1),0,10000);
     SLIDER_SetRange(WM_GetDialogItem(pMsg->hWin, ID_SLIDER_1),  0,10000);

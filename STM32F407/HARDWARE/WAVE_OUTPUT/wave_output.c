@@ -189,11 +189,11 @@ void Wave_Output_Config_VppOffset(float Vpp, float offset)
 /**
  * @brief Wave_Output_Config
  * 
- * @param Output_Wave_Form 
- * @param f 
+ * @param Output_Wave_Form 类型：enum Wave_Form 
+ * @param f 单位 Hz
  * @param Vpp  单位 V
  * @param offset  单位 V
- * @param duty 
+ * @param duty 单位 %
  * @return int 
  */
 int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, float offset, int duty)

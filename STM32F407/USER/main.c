@@ -18,27 +18,19 @@
 #include "FramewinDLG.h"
 
 /************************************************
-F4_HAL_emwin
-移植组合：
-正点原子式STM32项目结构 + 正点原子库 + HAL库 + STemWin
-试验成功支持：STM32F407ZGT6
-
- ALIENTEK STM32F407ZGT6最小系统版
- 物理学术竞赛
- 一体化万能示波器 E-kit
+fork from F4_HAL_emwin https://github.com/framist/STemWinForHAL
+实现平台 ALIENTEK STM32F407ZGT6最小系统版
+项目应用 物理学术竞赛 一体化万能示波器 E-kit
 
 版级接口：
-TFTLCD <-排线-> TFTLCD(>=3.5')
-VREF <-跳线帽- 3.3V
-PA5 <-- adc输入
-PA4 --> dac输出
+TFTLCD <--排线--> TFTLCD(>=3.5')
+VREF   <-跳线帽-- 3.3V
+PA5    <-------- adc输入
+PA4    --------> dac输出
 
 printf 已重载为串口输出
 
 耦合一时爽，重构火葬场！
- 移植重构LOG：
- 
- 
 ************************************************/
 
 #define NUM_MEASURE_POINTS 1024 //200,000Hz采样率情况下采集1024可保证识别到90hz

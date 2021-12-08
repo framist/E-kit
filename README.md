@@ -706,10 +706,6 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 
 
-## 一些经验
-
-移植cube-MX生成的工程时注意`stm32f4xx_it.c `文件也会生成一些代码
-
 
 
 ![image-20210906003413804](README/image-20210906003413804.png)

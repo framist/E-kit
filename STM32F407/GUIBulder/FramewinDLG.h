@@ -16,7 +16,8 @@
 ////////////////////////////////////////////////////////////////////////////////// 	
 
 WM_HWIN CreatemainFramewin(void);
-void mainLogPrint(char *log);
+void mainLogPrint(const char *log);
+void mainLogPrintf(const char *fmt, ...);
 
 extern WM_HWIN hWin_oscilloscopeFramewin;
 extern WM_HWIN hWin_SingalWindow;

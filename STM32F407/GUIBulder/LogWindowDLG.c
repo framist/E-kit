@@ -20,7 +20,6 @@
 
 // USER START (Optionally insert additional includes)
 #include "FramewinDLG.h"
-#include <stdio.h>
 #include <string.h>
 // USER END
 
@@ -37,7 +36,7 @@
 
 
 // USER START (Optionally insert additional defines)
-#define MAX_MAIN_LOG_LEN 300
+#define MAX_MAIN_LOG_LEN 2048
 // USER END
 
 /*********************************************************************
@@ -152,17 +151,21 @@ WM_HWIN CreateLogWindow(void) {
 }
 
 // USER START (Optionally insert additional public code)
-static void _setText(char *log){
+
+
+static void _setText(const char *log){
     WM_HWIN hItem;
     hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
     char nowText[MAX_MAIN_LOG_LEN];
     MULTIEDIT_GetText(hItem,nowText,MAX_MAIN_LOG_LEN);
-    strcpy(nowText, nowText + strlen(log) + 20); //有待更精确计算
+    strcpy(nowText, nowText + strlen(log) + 1 ); 
     strcat(nowText,log);
     MULTIEDIT_SetText(hItem,nowText);
+    MULTIEDIT_SetCursorOffset(hItem,(int)strlen(nowText));
+
 }
 
-void mainLogPrint(char *log)
+void mainLogPrint(const char *log)
 {
     WM_HWIN hItem;
     hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
@@ -180,6 +183,23 @@ void mainLogPrint(char *log)
 
 }
 
+
+#include <stdarg.h>  
+
+void mainLogPrintf(const char *fmt, ...)  
+{  
+    va_list va;  
+    char buf[1024];  
+    memset(buf, 0, 1024);  
+      
+    va_start(va, fmt);  
+    
+    vsprintf(buf, fmt, va);
+    
+    va_end(va);  
+      
+    mainLogPrint( buf);  
+}  
 
 // USER END
 

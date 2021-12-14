@@ -168,26 +168,38 @@ int main(void)
     TP_Init();				        //触摸屏初始化
     RNG_Init();	 		            //初始化随机数发生器
 
+	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
 	
 	my_mem_init(SRAMIN);			//初始化内部内存池
+	//my_mem_init(SRAMEX);			//不使用外部内存池
 	my_mem_init(SRAMCCM);			//初始化CCM内存池
     
-    __HAL_RCC_CRC_CLK_ENABLE();		//使能CRC时钟，否则STemWin不能使用
+    __HAL_RCC_CRC_CLK_ENABLE();//使能CRC时钟，否则STemWin不能使用
 
 	WM_SetCreateFlags(WM_CF_MEMDEV);//为重绘操作自动使用存储设备
 	GUI_Init();
     GUI_CURSOR_Show();
 
+
+    void True_mV_To_aPoints(void);
+    void plot_aPoint(WM_HWIN hWin);
+    void refresh_Measure(WM_HWIN hWin);
+
+    WM_HWIN CreatemainFramewin(void);
     CreatemainFramewin();
+    mainLog_init();
+    mainLogPrintf("Init OK!\n");
     
-    mainLogPrint("\ninit OK!");
-    
+    extern ADC_HandleTypeDef ADC1_Handler;
+    extern int IOT;
+    int i;	
+
     while(1)
 	{
 		GUI_Delay(100); 
         GUI_Exec();
-        
+
         //测量
         Measure();
         //绘制

@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\USER;..\OBJ;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F4xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\24CXX;..\HARDWARE\W25QXX;..\MALLOC;..\DSP_LIB\Include;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\GUIBulder;..\HARDWARE\WAVE_OUTPUT;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\DMA;..\HARDWARE\TIM;..\HARDWARE\GPIO;..\SYSTEM\my_fft;..\HARDWARE\RNG</IncludePath>
+              <IncludePath>..\CORE;..\USER;..\OBJ;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HALLIB\STM32F4xx_HAL_Driver\Inc;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\LCD;..\HARDWARE\TIMER;..\HARDWARE\SRAM;..\HARDWARE\TOUCH;..\HARDWARE\IIC;..\HARDWARE\SPI;..\HARDWARE\24CXX;..\HARDWARE\W25QXX;..\MALLOC;..\DSP_LIB\Include;..\EMWIN\STemWin\inc;..\EMWIN\STemWin\Config;..\GUIBulder;..\HARDWARE\WAVE_OUTPUT;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\DMA;..\HARDWARE\TIM;..\HARDWARE\GPIO;..\SYSTEM\my_fft;..\HARDWARE\RNG;..\SYSTEM\linkqueue</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -570,6 +570,11 @@
               <FileName>my_fft.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\my_fft\my_fft.c</FilePath>
+            </File>
+            <File>
+              <FileName>linkqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\linkqueue\linkqueue.c</FilePath>
             </File>
           </Files>
         </Group>

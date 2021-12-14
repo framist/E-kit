@@ -21,6 +21,7 @@
 // USER START (Optionally insert additional includes)
 #include "FramewinDLG.h"
 #include <string.h>
+#include "linkqueue.h"
 // USER END
 
 #include "DIALOG.h"
@@ -37,6 +38,7 @@
 
 // USER START (Optionally insert additional defines)
 #define MAX_MAIN_LOG_LEN 2048
+#define MAX_MAIN_LOG_ROW 20
 // USER END
 
 /*********************************************************************
@@ -152,35 +154,56 @@ WM_HWIN CreateLogWindow(void) {
 
 // USER START (Optionally insert additional public code)
 
+linkQueue *pLogQueue;
 
 static void _setText(const char *log){
-    WM_HWIN hItem;
-    hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
-    char nowText[MAX_MAIN_LOG_LEN];
-    MULTIEDIT_GetText(hItem,nowText,MAX_MAIN_LOG_LEN);
-    strcpy(nowText, nowText + strlen(log) + 1 ); 
-    strcat(nowText,log);
-    MULTIEDIT_SetText(hItem,nowText);
-    MULTIEDIT_SetCursorOffset(hItem,(int)strlen(nowText));
+    WM_HWIN hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
+
+
+    MULTIEDIT_SetText(hItem,log);
+    MULTIEDIT_SetCursorOffset(hItem,(int)strlen(log));
 
 }
 
-void mainLogPrint(const char *log)
-{
-    WM_HWIN hItem;
-    hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
+/**
+ * @brief listqueue 转换为字符串
+ * 
+ * @param pLQ 
+ * @return char* 
+ */
+void _LQ_to_text(linkQueue *pLQ){
+    char buf[MAX_MAIN_LOG_LEN];  
+    memset(buf, 0, sizeof(buf));  
+    queueData_t data;
+    LinkNode *p = pLQ->front->next;
 
-    int nowLen = MULTIEDIT_GetTextSize(hItem);
-    int maxLen = MAX_MAIN_LOG_LEN;
-
-    if (strlen(log) + nowLen >= maxLen)
-    {
-        _setText(log);
-    }else{
-        MULTIEDIT_SetCursorOffset(hItem,nowLen);
-        MULTIEDIT_AddText(hItem,log);
+    int i = 0;
+    for(i = 0; i < LQ_Length(pLQ); i++){
+        data = p->data;
+        strcat(buf,data);
+        strcat(buf,"\n");
+        p = p->next;
     }
+    _setText(buf);
+}
 
+void mainLog_init(void){
+    LQ_init(pLogQueue);
+    mainLogPrint("init param: 1LTKvNaux7CjrNHJ09C0y87Eo7/Rrbu3zfm4tKOsus7Ksbb41rmjv9a5zqrWucv51rmjrLTLzsTT1rrOtOajvw==");
+}
+
+void mainLogPrint(const char *log) {
+    queueData_t data;
+
+    // 最多只保留 MAX_MAIN_LOG_ROW 行
+    if(LQ_Length(pLogQueue)>MAX_MAIN_LOG_ROW){
+        LQ_Dequeue(pLogQueue,&data);
+        free(data);
+    }
+    data = (queueData_t)malloc(strlen(log)+1);
+    LQ_Enqueue(pLogQueue,data);
+
+    _LQ_to_text(pLogQueue);
 }
 
 

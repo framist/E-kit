@@ -4,6 +4,7 @@
 #include "WM.h"
 
 WM_HWIN CreatemainFramewin(void);
+void mainLog_init(void);
 void mainLogPrint(const char *log);
 void mainLogPrintf(const char *fmt, ...);
 

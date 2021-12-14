@@ -5,7 +5,6 @@
  * @version 0.1
  * @date 2021-12-13
  * @copyright Copyright (c) framist. All rights reserved
- * 可能存在内存泄露
  */
 
 #include "main.h"
@@ -13,7 +12,7 @@
 
 
 void LQ_init(linkQueue *q) {
-    q->front = q->front = (LinkNode *)malloc(sizeof(LinkNode)); 
+    q->rear = q->front = (LinkNode *)malloc(sizeof(LinkNode)); 
     q->front->next = NULL;
 }
 
@@ -74,8 +73,8 @@ int LQ_Dequeue(linkQueue *q, queueData_t *x) {
 
 int LQ_Length(linkQueue *q) {
     int len = 0;
-    LinkNode *p = q->front->next;
-    while (p != NULL) {
+    LinkNode *p = q->front;
+    while (p->next != NULL) {
         len++;
         p = p->next;
     }

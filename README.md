@@ -2,13 +2,15 @@
 
 E-kit 一体化电子工具箱，STM32实现，示波器+函数发生器+幅频特性仪器...
 
+![image-20220517134135846](README/image-20220517134135846.png)
+
 ![main](README/main.jpg)
 
 ![singal](README/singal.jpg)
 
 ![幅频特性](README/幅频特性.jpg)
 
-
+![image-20220517134550718](README/image-20220517134550718.png)
 
 *目前此项目更新暂缓*
 
@@ -488,25 +490,13 @@ int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, floa
 
 ### 2. 硬件部分
 
-1.1  电路设计
 
-1.1.1 电源部分
 
- 
+参考外围电路设计
 
-1.1.2 扩幅电路部分
+from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
- 
-
-1.2  PCB 设计
-
- 
-
-1.3  电子元件的焊接
-
- 
-
- 
+![image-20210915161056175](README/image-20210915161056175.png)
 
 ## 三、实验仪器的应用
 
@@ -700,11 +690,9 @@ int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, floa
 
 ## 附录
 
-### 参考外围电路设计
 
-from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
-![image-20210915161056175](README/image-20210915161056175.png)
+
 
 
 

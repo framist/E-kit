@@ -73,8 +73,8 @@ int LQ_Dequeue(linkQueue *q, queueData_t *x) {
 
 int LQ_Length(linkQueue *q) {
     int len = 0;
-    LinkNode *p = q->front;
-    while (p->next != NULL) {
+    LinkNode *p = q->front->next;
+    while (p != NULL) {
         len++;
         p = p->next;
     }

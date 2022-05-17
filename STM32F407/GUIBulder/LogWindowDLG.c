@@ -159,7 +159,6 @@ linkQueue *pLogQueue;
 static void _setText(const char *log){
     WM_HWIN hItem = WM_GetDialogItem(hWin_LogFramewin, ID_MULTIEDIT_0);
 
-
     MULTIEDIT_SetText(hItem,log);
     MULTIEDIT_SetCursorOffset(hItem,(int)strlen(log));
 
@@ -188,6 +187,7 @@ void _LQ_to_text(linkQueue *pLQ){
 }
 
 void mainLog_init(void){
+    pLogQueue = (linkQueue *)malloc(sizeof(linkQueue));
     LQ_init(pLogQueue);
     mainLogPrint("init param: 1LTKvNaux7CjrNHJ09C0y87Eo7/Rrbu3zfm4tKOsus7Ksbb41rmjv9a5zqrWucv51rmjrLTLzsTT1rrOtOajvw==");
 }
@@ -196,11 +196,12 @@ void mainLogPrint(const char *log) {
     queueData_t data;
 
     // 最多只保留 MAX_MAIN_LOG_ROW 行
-    if(LQ_Length(pLogQueue)>MAX_MAIN_LOG_ROW){
+    if(LQ_Length(pLogQueue) >= MAX_MAIN_LOG_ROW){
         LQ_Dequeue(pLogQueue,&data);
         free(data);
     }
     data = (queueData_t)malloc(strlen(log)+1);
+    strcpy(data,log);
     LQ_Enqueue(pLogQueue,data);
 
     _LQ_to_text(pLogQueue);
@@ -216,11 +217,9 @@ void mainLogPrintf(const char *fmt, ...)
     memset(buf, 0, 1024);  
       
     va_start(va, fmt);  
-    
     vsprintf(buf, fmt, va);
-    
     va_end(va);  
-      
+
     mainLogPrint( buf);  
 }  
 

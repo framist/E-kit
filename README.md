@@ -2,13 +2,15 @@
 
 E-kit 一体化电子工具箱，STM32实现，示波器+函数发生器+幅频特性仪器...
 
+![image-20220517134135846](README/image-20220517134135846.png)
+
 ![main](README/main.jpg)
 
 ![singal](README/singal.jpg)
 
 ![幅频特性](README/幅频特性.jpg)
 
-
+![image-20220517134550718](README/image-20220517134550718.png)
 
 *目前此项目更新暂缓*
 
@@ -168,26 +170,38 @@ int main(void)
     TP_Init();				        //触摸屏初始化
     RNG_Init();	 		            //初始化随机数发生器
 
+	//SRAM_Init();					//初始化外部SRAM  
     MY_ADC_Init();
 	
 	my_mem_init(SRAMIN);			//初始化内部内存池
+	//my_mem_init(SRAMEX);			//不使用外部内存池
 	my_mem_init(SRAMCCM);			//初始化CCM内存池
     
-    __HAL_RCC_CRC_CLK_ENABLE();		//使能CRC时钟，否则STemWin不能使用
+    __HAL_RCC_CRC_CLK_ENABLE();//使能CRC时钟，否则STemWin不能使用
 
 	WM_SetCreateFlags(WM_CF_MEMDEV);//为重绘操作自动使用存储设备
 	GUI_Init();
     GUI_CURSOR_Show();
 
+
+    void True_mV_To_aPoints(void);
+    void plot_aPoint(WM_HWIN hWin);
+    void refresh_Measure(WM_HWIN hWin);
+
+    WM_HWIN CreatemainFramewin(void);
     CreatemainFramewin();
+    mainLog_init();
+    mainLogPrintf("Init OK!\n");
     
-    mainLogPrint("\ninit OK!");
-    
+    extern ADC_HandleTypeDef ADC1_Handler;
+    extern int IOT;
+    int i;	
+
     while(1)
 	{
 		GUI_Delay(100); 
         GUI_Exec();
-        
+
         //测量
         Measure();
         //绘制
@@ -476,25 +490,13 @@ int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, floa
 
 ### 2. 硬件部分
 
-1.1  电路设计
 
-1.1.1 电源部分
 
- 
+参考外围电路设计
 
-1.1.2 扩幅电路部分
+from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
- 
-
-1.2  PCB 设计
-
- 
-
-1.3  电子元件的焊接
-
- 
-
- 
+![image-20210915161056175](README/image-20210915161056175.png)
 
 ## 三、实验仪器的应用
 
@@ -688,11 +690,6 @@ int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, floa
 
 ## 附录
 
-### 参考外围电路设计
-
-from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
-
-![image-20210915161056175](README/image-20210915161056175.png)
 
 
 
@@ -701,6 +698,21 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 
 
+---
+
+# 数据结构重构
+
+## 使用链队列重构log显示输出部分
+
+为什么？
+
+- 单片机RAM空间小，超出存储空间的log条目因按先进先出的规则删除，故选择队列作为数据结构。
+- log输出应该按条存储，而条目的长短不一，故使用链队列作为数据结构。之前通过字符数组实现未实现条目分离，导致清除空间的时可能会导致最旧条目只删除了一部分，导致显示效果不佳。
+- ~~课程作业要求~~
+
+
+
+* log输出的重构，使用可变参实现
 
 ---
 

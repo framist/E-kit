@@ -105,8 +105,8 @@ int main(void)
 
     WM_HWIN CreatemainFramewin(void);
     CreatemainFramewin();
-    
-    mainLogPrint("\ninit OK!");
+    mainLog_init();
+    mainLogPrintf("Init OK!\n");
     
     extern ADC_HandleTypeDef ADC1_Handler;
     extern int IOT;

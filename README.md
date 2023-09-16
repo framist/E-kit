@@ -1,6 +1,11 @@
+<div align="center">
+  <img width="100" heigth="100" src="./README/image-20210906003413804.png">
+</div>
+
+
 # E-kit
 
-E-kit 一体化电子工具箱，STM32实现，示波器+函数发生器+幅频特性仪器...
+E-kit 一体化电子工具箱，STM32 实现，示波器 + 函数发生器 + 幅频特性仪器...
 
 ![image-20220517134135846](README/image-20220517134135846.png)
 
@@ -10,48 +15,28 @@ E-kit 一体化电子工具箱，STM32实现，示波器+函数发生器+幅频特性仪器...
 
 ![幅频特性](README/幅频特性.jpg)
 
-![image-20220517134550718](README/image-20220517134550718.png)
+*目前此项目已归档*
 
-*目前此项目更新暂缓*
-
-*注意：工程采用GB2312编码*
-
-
+*注意：工程采用 GB2312 编码*
 
 ## 基本功能 
 
-* STM32F103 (停留在较旧的版本并停止更新，仅支持以下功能)
+- STM32F103 (停留在较旧的版本并停止更新，仅支持以下功能)
+  - [x] 基本示波器实现（包括波形判断，频率测量，峰峰值测量，占空比测量）
+  - [x] 任意频率正弦波输出
+  - [x] 多窗口支持
+  - [x] 集中式 Log
+- STM32F407
+  - [x] 基本示波器实现（包括波形判断，频率测量，峰峰值测量，占空比测量）
+  - [x] 任意频率正弦波输出
+  - [x] 多窗口支持
+  - [x] 集中式 Log
+  - [x] 幅频特性仪移植
+  - [ ] 上位机通讯重构
+  - [x] 函数信号发生器
+  - [ ] 示波器触发模式
+  - [ ] 电池管理
 
-- [x] 基本示波器实现（包括波形判断，频率测量，峰峰值测量，占空比测量）
-- [x] 任意频率正弦波输出
-- [x] 多窗口支持
-- [x] 集中式Log
-
-
-
-* STM32F407
-
-- [x] 基本示波器实现（包括波形判断，频率测量，峰峰值测量，占空比测量）
-
-- [x] 任意频率正弦波输出
-
-- [x] 多窗口支持
-
-- [x] 集中式Log
-
-- [x] 幅频特性仪移植
-
-- [ ] 上位机通讯重构
-
-- [x] 函数信号发生器
-
-- [ ] 示波器触发模式
-
-- [ ] 电池管理
-
-  
-
----
 
 # 设计文档
 
@@ -59,41 +44,42 @@ E-kit 一体化电子工具箱，STM32实现，示波器+函数发生器+幅频特性仪器...
 
 ### 1. 软件部分
 
-采用HAL库支持的C语言程序实现，通过无操作系统的形式直接运行在ARM架构STM32F407单片机上。通过 ARM Cortex M4 额外支持的硬件FPU、DSP指令集，更快的FSMC，给予程序更高的运行效率、数据处理效率以及更高的显示速度。
+采用 HAL 库支持的 C 语言程序实现，通过无操作系统的形式直接运行在 ARM 架构 STM32F407 单片机上。通过 ARM Cortex M4 额外支持的硬件 FPU、DSP 指令集，更快的 FSMC，给予程序更高的运行效率、数据处理效率以及更高的显示速度。
 
-程序流程通过初始化+主循环的结果，GUI交互回调相应的模式。稳定性好。显示方案采用STemWin图形库实现，并支持电阻屏触摸，自己移植的图形库配合HAL库的框架工程开源在[framist/STemWinForHAL: 移植emWin与HAL库结合。（正点原子项目结构） (github.com)](https://github.com/framist/STemWinForHAL)。
+程序流程通过初始化 + 主循环的结果，GUI 交互回调相应的模式。稳定性好。显示方案采用 STemWin 图形库实现，并支持电阻屏触摸，自己移植的图形库配合 HAL 库的框架工程开源在[framist/STemWinForHAL: 移植 emWin 与 HAL 库结合。（正点原子项目结构） (github.com)](https://github.com/framist/STemWinForHAL)。
 
 项目工程已开源在 [framist/E-kit: E-kit 一体化电子工具箱 (github.com)](https://github.com/framist/E-kit)
 
 总体使用到的版级接口：
 
+```
 TFTLCD <--排线--> TFTLCD(>=3.5')
 
 VREF  <-跳线帽-- 3.3V
 
-PA5  <-------- adc输入
+PA5  <-------- adc 输入
 
-PA4  --------> dac输出
+PA4  --------> dac 输出
+```
 
 #### 1.1 示波器部分
 
 
+通过通用定时器 TIM5 定时中断，控制 ADC 按精准的时间间隔取样。
 
-通过通用定时器TIM5定时中断，控制ADC按精准的时间间隔取样。
+采用 DSP 库中的 FFT 算法得出频率，作为后续处理的前提参考。微分法首先判别是否为方波，积分法判断波形和测占空比，同时还能实时测量信号的峰峰值、偏置电压等等。 
 
-采用DSP库中的FFT算法得出频率，作为后续处理的前提参考。微分法首先判别是否为方波，积分法判断波形和测占空比，同时还能实时测量信号的峰峰值、偏置电压等等。 
-
-示波器还采用自动量程。通过当前计算的波形频率自动调整ADC的采样周期，已适应更大的频率范围
+示波器还采用自动量程。通过当前计算的波形频率自动调整 ADC 的采样周期，已适应更大的频率范围
 
  
 
 #### 1.2 信号发生器部分
 
-使用DMA的方法把内存中的波形数据依次传递到DAC控制器，基本定时器TIM6控制DMA的速度来控制输出波形的频率。
+使用 DMA 的方法把内存中的波形数据依次传递到 DAC 控制器，基本定时器 TIM6 控制 DMA 的速度来控制输出波形的频率。
 
 通过软件控制波形、峰峰值、偏置电压、占空比。
 
-DAC输出0~3.3V的电平信号再经过外围电路的转换得到-5V到+5V范围的信号并进行输出。
+DAC 输出 0~3.3V 的电平信号再经过外围电路的转换得到 -5V 到 +5V 范围的信号并进行输出。
 
 
 
@@ -105,11 +91,11 @@ DAC输出0~3.3V的电平信号再经过外围电路的转换得到-5V到+5V范围的信号并进行输出。
 
 通过幅频特性曲线可以判别出滤波器的类型，目前可自动判别以下几种类型的滤波器：
 
-0：低通 HPF 1：高通 LPF 2：带通 BPF 3：带阻BRF 
+0：低通 HPF 1：高通 LPF 2：带通 BPF 3：带阻 BRF 
 
 
 
-#### 1.4 IOT上位机部分
+#### 1.4 IOT 上位机部分
 
 蓝牙串口透传模块实现。可转换实现与上位机的无线信号传输。
 
@@ -117,107 +103,35 @@ DAC输出0~3.3V的电平信号再经过外围电路的转换得到-5V到+5V范围的信号并进行输出。
 
 ![image-20210914214415461](README/image-20210914214415461.png)
 
- 
 
 ### 2. 硬件部分
 
 
+#### 2.1 电源部分
 
-#### 2.1电源部分
+2.1.USB   接口模块部分 
 
- 2.1.USB   接口模块部分 
+2.1.2   充电蓄电模块部分 
 
- 2.1.2   充电蓄电模块部分 
-
- 2.1.3   负压生成部分 
-
- 
-
-#### 2.2扩幅电路部分
-
- 2.2.2   信号输入部分 
-
- 2.2.2   信号输出部分 
+2.1.3   负压生成部分 
 
  
 
-##  二、    仪器制作过程 
+#### 2.2 扩幅电路部分
+
+2.2.2   信号输入部分 
+
+2.2.2   信号输出部分 
+
+ 
+
+##  二、仪器制作过程 
 
 ###  1.   软件部分
 
-
-
 ####  1.1   主函数部分 
 
-主函数主要实现 init 与 main loop。具体实现伪代码如下：
-
-```c
-int main(void)
-{
-    HAL_Init();                   	//初始化HAL库  
-    
-    Stm32_Clock_Init(336,8,2,7);  	//设置时钟,168Mhz
-	delay_init(168);               	//初始化延时函数
-	uart_init(9600);             	//初始化USART
-    
-    TIM3_Init(999,83); 	            //1KHZ 定时器3设置为1ms
-    TIM4_Init(999,839);             //触摸屏扫描速度,100HZ.
-	TIM5_Init(999,0);               //采样用
-    Wave_Output_Init();             //初始化 dac-DMA-tim6 输出 
-	LED_Init();						//初始化LED	
-	KEY_Init();						//初始化KEY
-	TFTLCD_Init();           	    //初始化LCD FSMC接口
-    TP_Init();				        //触摸屏初始化
-    RNG_Init();	 		            //初始化随机数发生器
-
-	//SRAM_Init();					//初始化外部SRAM  
-    MY_ADC_Init();
-	
-	my_mem_init(SRAMIN);			//初始化内部内存池
-	//my_mem_init(SRAMEX);			//不使用外部内存池
-	my_mem_init(SRAMCCM);			//初始化CCM内存池
-    
-    __HAL_RCC_CRC_CLK_ENABLE();//使能CRC时钟，否则STemWin不能使用
-
-	WM_SetCreateFlags(WM_CF_MEMDEV);//为重绘操作自动使用存储设备
-	GUI_Init();
-    GUI_CURSOR_Show();
-
-
-    void True_mV_To_aPoints(void);
-    void plot_aPoint(WM_HWIN hWin);
-    void refresh_Measure(WM_HWIN hWin);
-
-    WM_HWIN CreatemainFramewin(void);
-    CreatemainFramewin();
-    mainLog_init();
-    mainLogPrintf("Init OK!\n");
-    
-    extern ADC_HandleTypeDef ADC1_Handler;
-    extern int IOT;
-    int i;	
-
-    while(1)
-	{
-		GUI_Delay(100); 
-        GUI_Exec();
-
-        //测量
-        Measure();
-        //绘制
-        True_mV_To_aPoints();
-        plot_aPoint(hWin_oscilloscopeFramewin);
-        //显示数据
-        refresh_Measure(hWin_oscilloscopeFramewin);
-	} 
-}
-
-
-```
-
-
-
-
+主函数主要实现 init 与 main loop。
 
 ####  1.2   屏幕部分 
 
@@ -227,7 +141,7 @@ int main(void)
 
  ![image-20210914224600397](README/image-20210914224600397.png)
 
-先生成一个主窗口框架 mainFramewin ，再在此窗口框架中通过 Multipage 窗口小组件生成四页选项卡，每页分别包含一个窗口。
+先生成一个主窗口框架 mainFramewin，再在此窗口框架中通过 Multipage 窗口小组件生成四页选项卡，每页分别包含一个窗口。
 
 ```c
 hItem = WM_GetDialogItem(pMsg->hWin, ID_MULTIPAGE_0);
@@ -256,29 +170,19 @@ MULTIPAGE_SelectPage(hItem,0);
 ```
 
 
-
-
-
 1.2.2 图形界面
 
- 按功能分别包含4个子窗口，功能分别作示波器、波形发生器、幅频特性测试仪、系统日志的窗口：
+按功能分别包含 4 个子窗口，功能分别作示波器、波形发生器、幅频特性测试仪、系统日志的窗口：
 
-
-
-![示波器UI](README/image-20210730202408105.png)
+![示波器 UI](README/image-20210730202408105.png)
 
 ![波形发生器](README/image-20210907223205490.png)
 
 
+![幅频特性 UI](README/image-20210730202505206.png)
 
-![幅频特性UI](README/image-20210730202505206.png)
-
-
-
- 
 
 日志窗口只是一个输出日志的文本框。
-
 
 
 #### 1.3 信号获取与处理部分
@@ -286,48 +190,6 @@ MULTIPAGE_SelectPage(hItem,0);
  
 
 1.3.1 ADC 获取数据
-
-主要程序结构如下：
-
- ```c
- ADC_ChannelConfTypeDef ADC1_ChanConf;
- ADC1_ChanConf.Channel=ADC_CHANNEL_5;                        //通道 5 (注意)
- ADC1_ChanConf.Rank=1;                                       //第1个序列，序列1
- ADC1_ChanConf.SamplingTime=ADC_SAMPLETIME_3CYCLES;         //采样时间    改为最快           
- HAL_ADC_ConfigChannel(&ADC1_Handler,&ADC1_ChanConf);        //通道配置
- HAL_ADC_Start(&ADC1_Handler);                               //开启ADC
- //定时器溢出频率计算: F = Ft/((arr+1)*(psc+1)) us.
- // arr  ; psc = 0 ; 1ms
- //Ft=定时器工作频率,F1:72Mhz; F4:84Mhz
- // arr = Ft/F - 1   ; Fmax~200,000;一次取样5us
- //F 自动调节；
- if (sampleF == 200000 && F_measured<2000) {
-     sampleF = 20000;
-     us_div = 1000; //强制改变 us_div
- }else if (sampleF == 20000 && F_measured>1500) {
-     sampleF = 200000;
-     us_div = 100; //强制改变 us_div
- }
- TIM5->ARR = (uint16_t)(84000000/(sampleF) - 1); 
- 
- iNumMeasurePoints = 0;
- HAL_TIM_Base_Start_IT(&TIM5_Handler);     //使能
- while(iNumMeasurePoints < NumMeasurePoints);
- 
- HAL_TIM_Base_Stop_IT(&TIM5_Handler);      //关闭
- 
- void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
- {
-     if(htim==(&TIM5_Handler)){
-         //定时单次取样
-         if(iNumMeasurePoints >= NumMeasurePoints) return;
-         //返回最近一次ADC1规则组的转换结果; 4095-值 是因为外置电路的妥协
-         OrginalV[iNumMeasurePoints] = 4095 - (u16)HAL_ADC_GetValue(&ADC1_Handler);     
-         iNumMeasurePoints++;        
-     }
- }
- ```
-
 
 
 1.3.2 FFT 处理数据
@@ -348,17 +210,17 @@ void arm_cmplx_mag_f32(
 
 
 
-完成FFT计算。（但主要这两个函数目前不再推荐使用）
+完成 FFT 计算。（但主要这两个函数目前不再推荐使用）
 
- 主要程序结构如下：
+主要程序结构如下：
 
 ```c
 float wave_frequency_calculate(void)
 {
-    //初始化scfft结构体，设定FFT相关参数
+    //初始化 scfft 结构体，设定 FFT 相关参数
     arm_cfft_radix4_instance_f32 scfft;
     arm_cfft_radix4_init_f32(&scfft,FFT_LENGTH,0,1); // TODO 不知道加上按位取反的原理
-    //FFT计算（基4）
+    //FFT 计算（基 4）
     arm_cfft_radix4_f32(&scfft,fft_inputbuf);	
     //把运算结果复数求模得幅值 
     arm_cmplx_mag_f32(fft_inputbuf,fft_outputbuf,FFT_LENGTH);	
@@ -396,7 +258,7 @@ float wave_frequency_calculate(void)
 
 #### 1.4 信号的产生与输出部分
 
-1.4.1 DAC产生信号
+1.4.1 DAC 产生信号
 
 DAC+TIM6+DMA 的配置由 cube-MX 配置生成。
 
@@ -414,8 +276,6 @@ hdma_dac1.Init.Mode = DMA_CIRCULAR;
 hdma_dac1.Init.Priority = DMA_PRIORITY_HIGH;
 hdma_dac1.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
 ```
-
-
 
 1.4.1.2 DMA 传输数据
 
@@ -438,8 +298,6 @@ htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
 htim6.Init.Period = 9999;
 ```
 
-
-
 1.4.1.4 不同波形的产生
 
 控制传入的枚举类型以及其他参数可以方便的配置输出
@@ -451,8 +309,8 @@ enum Wave_Form
   Wave_Form_SIN,      //正弦波  ~~~~
   Wave_Form_TRI,      //三角波  VVVV
   Wave_Form_SQU,      //方波    _||_
-  Wave_Form_SAW_1,    //锯齿波1 /|/|  
-  Wave_Form_SAW_2,    //锯齿波2 |\|\|  
+  Wave_Form_SAW_1,    //锯齿波 1 /|/|  
+  Wave_Form_SAW_2,    //锯齿波 2 |\|\|  
   Wave_Form_RAD,      //噪波    ????
   Wave_Form_DC        //直流    ----
 };
@@ -472,13 +330,10 @@ enum Wave_Form
 int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, float offset, int duty)
 ```
 
- 
 
- 
+1.4.2 上位机传输数据
 
-1.4.2上位机传输数据
-
-1.4.2.1无线传输模块
+1.4.2.1 无线传输模块
 
 采用蓝牙串口透传。
 
@@ -490,8 +345,6 @@ int Wave_Output_Config(enum Wave_Form Output_Wave_Form, float f, float Vpp, floa
 
 ### 2. 硬件部分
 
-
-
 参考外围电路设计
 
 from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
@@ -502,7 +355,7 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 ### 1. 整体说明
 
-在转置的前端是显示屏幕，可以直接在屏幕上直接触摸来对各种参数进行设置，旁边分别是信号的输入和输出端口。在装置的后端是USB电源接口和指示灯。
+在转置的前端是显示屏幕，可以直接在屏幕上直接触摸来对各种参数进行设置，旁边分别是信号的输入和输出端口。在装置的后端是 USB 电源接口和指示灯。
 
  
 
@@ -511,12 +364,9 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 ![main](README/main.jpg)
 
 
-
 当信号经由输入端口进入仪器以后即可在屏幕上得到其波形，将对其波形进行识别并做出判断。同时显示出其峰峰值、频率，如果是自动判断为方波将自动测量占空比，或者手动点击`DR Measure`按钮也可以自动测量占空比。
 
 对于波形显示，可以对其水平灵敏度和垂直灵敏度进行调节，也可以点击`Stop/Run`进行波形冻结。
-
-
 
  
 
@@ -530,14 +380,14 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 可以选择输出：
 
-* OFF,      不启用DAC输出功能
-* SIN,      正弦波  ~~~~
-* TRI,      三角波  VVVV
-* SQU,      方波    _||_
-* SAW_1,    锯齿波1 /|/|  
-* SAW_2,    锯齿波2 |\|\|  
-* RAD,      噪波    ????
-* DC,       直流    ----
+* OFF,      不启用 DAC 输出功能
+* SIN,      正弦波  `~~~~`
+* TRI,      三角波  `VVVV`
+* SQU,      方波    `_||_`
+* SAW_1,    锯齿波 1 `/|/|`  
+* SAW_2,    锯齿波 2 `|\|\|`  
+* RAD,      噪波    `????`
+* DC,       直流    `----`
 
 
 **捷径配置选择：**
@@ -580,43 +430,24 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 ### 5. 上位机传输功能
 
- 在示波器界面选择IOT复选框，可开启上位机传输功能，上传当前屏幕显示的波形，并与屏幕刷新同步。
+在示波器界面选择 IOT 复选框，可开启上位机传输功能，上传当前屏幕显示的波形，并与屏幕刷新同步。
 
  
 
-## 四、  仪器性能指标分析
-
-### 1. 仪器整体概况
-
-1.1总体尺寸
-
-长度：196.2mm
-
-宽度：175.8mm
-
-高度：68.6mm
-
-1.2屏幕尺寸
-
-长度：74.4mm
-
-宽度：49.3mm
-
-1.3仪器总重
+## 四、仪器性能指标分析
 
 ### 2.示波器
 
-2.1频率范围、误差、精度
+2.1 频率范围、误差、精度
 
 频率范围：50Hz——100kHZ
 
 频率精度：1Hz
 
 频率误差：
-
  
 
-2.2幅值范围、误差、精度
+2.2 幅值范围、误差、精度
 
 幅值范围：-5V——+5V
 
@@ -624,20 +455,16 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 幅值误差：
 
- 
 
-2.3水平灵敏度、垂直灵敏度
+2.3 水平灵敏度、垂直灵敏度
 
-水平灵敏度范围：1us/div~1000us/div可调
+水平灵敏度范围：1us/div~1000us/div 可调
 
-垂直灵敏度范围：50mV/div~500mV/div可调
+垂直灵敏度范围：50mV/div~500mV/div 可调
 
 垂直精度：2.4mV
 
 水平精度：5us
-
- 
-
  
 
 ### 3.信号发生器功能
@@ -674,11 +501,11 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 ### 4.幅频特性仪功能
 
-4.1频率范围、误差、精度
+4.1 频率范围、误差、精度
 
 在转置
 
-4.2幅值范围、误差、精度
+4.2 幅值范围、误差、精度
 
 在转置
 
@@ -686,38 +513,8 @@ from [yuexiavqiufeng](https://github.com/yuexiavqiufeng)
 
 波特率：9600
 
- 
-
-## 附录
-
-
-
-
-
-
-
-
-
 ---
-
-# 数据结构重构
-
-## 使用链队列重构log显示输出部分
-
-为什么？
-
-- 单片机RAM空间小，超出存储空间的log条目因按先进先出的规则删除，故选择队列作为数据结构。
-- log输出应该按条存储，而条目的长短不一，故使用链队列作为数据结构。之前通过字符数组实现未实现条目分离，导致清除空间的时可能会导致最旧条目只删除了一部分，导致显示效果不佳。
-- ~~课程作业要求~~
-
-
-
-* log输出的重构，使用可变参实现
-
----
-
-
-
-
 
 ![image-20210906003413804](README/image-20210906003413804.png)
+
+[框架科工](https://craft.framist.top/) | 致力为虚无的世间献上一点花火?

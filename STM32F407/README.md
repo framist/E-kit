@@ -6,11 +6,11 @@
 
 * 版级接口
   * TFTLCD <-排线-> TFTLCD(>=3.5')
-  * VREF <-跳线帽- 3.3V
-  * PA5 <-- adc输入
-  * PA4 --> dac输出
+  * VREF <-跳线帽 - 3.3V
+  * PA5 <-- adc 输入
+  * PA4 --> dac 输出
 
 ## fork from
 
-[framist/STemWinForHAL: 移植emWin与HAL库结合。(github.com)](https://github.com/framist/STemWinForHAL)
+[framist/STemWinForHAL: 移植 emWin 与 HAL 库结合。(github.com)](https://github.com/framist/STemWinForHAL)
 
